@@ -1,12 +1,13 @@
 function [H2dot,vapordot,heatdot,total_H2,total_vapor,total_heat,pdens,voltagedraw,currentdraw, airdot,total_air] = SOFC(E,T,pH2,dt,min_cells)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
-temp = [700,750,800];
-res = [0.05, 0.0367, 0.0307];
-i0 = [0.2327, 0.38, 0.38];
-ias = [2.3, 2.8397, 3.1323];
-ics = [2.3, 2.8292, 3.1311];
 
+% cell voltage equation (cve) coefficients
+temp = [700,750,800];           % temperature [celsius]
+res = [0.05, 0.0367, 0.0307];   % resistance  
+i0 = [0.2327, 0.38, 0.38];      % exchange current density
+ias = [2.3, 2.8397, 3.1323];    % anodic saturation density
+ics = [2.3, 2.8292, 3.1311];    % cathodic saturation density
+
+% linear fit equations: cve coefficents to temperature based on data
 syms t
 coeff_ias = polyfit(temp,ias,1);
 iaseq = coeff_ias(1)*t + coeff_ias(2);
@@ -20,6 +21,7 @@ icseq = coeff_ics(1)*t + coeff_ics(2);
 coeff_i0 = polyfit(temp,i0,1);
 i0eq = coeff_i0(1)*t + coeff_i0(2);
 
+% estimate values for given case based on temperature
 res_real = subs(reseq,t,T);
 ias_real = subs(iaseq,t,T);
 ics_real = subs(icseq,t,T);
@@ -42,8 +44,11 @@ j=1;
 while Vtemp > 0 
 
 i(j) = ntemp;    
-V(j) = V0 - ntemp.*res_real - 2.*R.*T./n./F .* log(1./2 .* (ntemp./i0_real + sqrt((ntemp./i0_real).^2 +4))) + R.*T./2./F .* log(1 - ntemp./ias_real)...
-    - R.*T./2./F .* log(1 + pH2.*ntemp./pH20./ias_real) + R.*T./4./F .* log(1 - ntemp./ics_real);
+V(j) = V0 - ntemp.*res_real - 2.*R.*T./n./F .* log(1./2 .* ...
+    (ntemp./i0_real + sqrt((ntemp./i0_real).^2 +4))) + R.*T./2./F .* ...
+    log(1 - ntemp./ias_real)- R.*T./2./F .* ...
+    log(1 + pH2.*ntemp./pH20./ias_real) + R.*T./4./F ...
+    .* log(1 - ntemp./ics_real);
 Vtemp = V(j);
 ntemp = ntemp + 0.01;
 j = j +1;
@@ -54,8 +59,10 @@ V(V~=real(V)) = NaN;
 power = i.*V;
 figure(19)
 plot(i,V)
+xlabel('Current Density (A/cm^2)')
+ylabel('Voltage (V)')
 
-A = 500; %cm^2
+A = 500; % cell area in cm^2
 
 
 figure(20)
@@ -95,14 +102,6 @@ O2dot = O2mol.*28.96./1000; % kg/s
 airdot = O2dot./0.06;
 total_air = sum(airdot.*dt);
 
-enthalpykg25 = -285.8/18.02*1000; % kJ/kg
-e2 = enthalpykg25 + 4.18*(100-25);
-e3 = e2 + 2260;
-e4 = e3 + 1.996*(T - 373.15);
-heatdot = e4.*vapordot; % kJ/s
-total_heat = sum(heatdot.*dt);
 
-% change enthalpy calculations temperature dependence on cp
-% Add efficiency of converters, inverters, motors, propellers
-% 
+%% Heat Calculation 
 end

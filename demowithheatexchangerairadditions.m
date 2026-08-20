@@ -9,15 +9,17 @@ for j = 1:8640
 end
 
 % splitting power load
-E = 0.3.*E;
+E = 1.*E;
 
 load("mission_t_v_h.mat");
 M = mission_t_v_h(3,:);
 V = mission_t_v_h(2,:);
-T = 600;
+T = 800;
 pH2 = 0.98;
 dt = 1;
+
 cells = SOFCsize(E,T,pH2);
+
 [H2dot,vapordot,heatdot,total_H2,total_vapor,total_heat,pdens,voltagedraw,currentdraw,airdot,total_air] = SOFC(E,T,pH2,dt,cells);
 time = 0:(length(E)-1);
 time = time.*dt;
@@ -164,8 +166,9 @@ Ti_air = -50 + 273.15;  % air at 35000 ft is around -50 deg C, to be changed
 
 [totalheatflowrate, LNGheatingdot, H2Oheatingdot, airheatingdot, burnerheat] = HeatExchanger(LNGflowrate, heatflowrate, heatdot, H2Oflowrate, efficiency, Ti_air, T, airdot);
 total_heat = sum(totalheatflowrate.*dt);
-disp("The total enthalpy from heating up the LNG fuel and water and from the fuel reformer and SOFC running in kJ is: ");
+disp("The net heat flow due to treating the LNG fuel and water and from the fuel reformer and SOFC running in kJ is: ");
 disp(total_heat);
+
 
 figure(4);
 plot(time, heatdot, LineWidth=2);

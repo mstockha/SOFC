@@ -1,4 +1,4 @@
-function [wbalance, H2Olevelintank, wtankmin, initalwaterintank, SOFC, FRneed, FRrelease, t2, wexhaust, totalexhauststeam, wtankflow] = steamrecyclewatertank(SOFC,FRneed,FRrelease, SOFCtimedelay, FRtimedelay)
+function [wbalance, H2Olevelintank, wtankmin, initalwaterintank, SOFC, FRneed, FRrelease, t2, wexhaust, totalexhauststeam, wtankflow] = steamrecyclewatertank(SOFC, FRneed, FRrelease, SOFCtimedelay, FRtimedelay)
 %UNTITLED4 Summary of this function goes here
 %   Detailed explanation goes here
 

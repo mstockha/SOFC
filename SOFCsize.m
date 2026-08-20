@@ -1,11 +1,13 @@
 function [min_cells] = SOFCsize(E,T,pH2)
 
-temp = [700,750,800];
-res = [0.05, 0.0367, 0.0307];
-i0 = [0.2327, 0.38, 0.38];
-ias = [2.3, 2.8397, 3.1323];
-ics = [2.3, 2.8292, 3.1311];
+% cell voltage equation (cve) coefficients
+temp = [700,750,800];           % temperature [celsius]
+res = [0.05, 0.0367, 0.0307];   % resistance  
+i0 = [0.2327, 0.38, 0.38];      % exchange current density
+ias = [2.3, 2.8397, 3.1323];    % anodic saturation density
+ics = [2.3, 2.8292, 3.1311];    % cathodic saturation density
 
+% linear fit equations: cve coefficents to temperature based on data
 syms t
 coeff_ias = polyfit(temp,ias,1);
 iaseq = coeff_ias(1)*t + coeff_ias(2);
@@ -19,20 +21,21 @@ icseq = coeff_ics(1)*t + coeff_ics(2);
 coeff_i0 = polyfit(temp,i0,1);
 i0eq = coeff_i0(1)*t + coeff_i0(2);
 
+% estimate values for given case based on temperature
 res_real = subs(reseq,t,T);
 ias_real = subs(iaseq,t,T);
 ics_real = subs(icseq,t,T);
 i0_real = subs(i0eq,t,T);
 
 
-V0 = 1.121;
-R = 8.314;
-n = 1;
+V0 = 1.121;         % ideal voltage
+R = 8.314;          % ideal gas constant
+n = 1;              
 F = 96485;
-pH20 = 1- pH2;
+pH20 = 1- pH2;      % partial pressure of water
 i = 0;
 V = 0;
-T = T +273.15;
+T = T +273.15;      % convert temperature to Kelvin
 
 ntemp = 0;
 Vtemp = 10000;
