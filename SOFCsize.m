@@ -1,5 +1,26 @@
 function [min_cells] = SOFCsize(E,T,pH2)
 
+Eth = 1.06;
+ASR = 0.04;
+j0_H2 = 10;
+alpha_H2 = 0.50;
+j0_O2 = 0.10;
+alpha_O2 = 0.30;
+
+R = 8.314;          % ideal gas constant             
+F = 96485;          % Faraday's constant
+T = T +273.15;      % convert temperature to Kelvin
+n = 2;              % electrons in H2 reaction
+
+
+
+
+
+
+
+
+
+
 % cell voltage equation (cve) coefficients
 temp = [700,750,800];           % temperature [celsius]
 res = [0.05, 0.0367, 0.0307];   % resistance  
