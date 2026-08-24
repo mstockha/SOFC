@@ -24,13 +24,12 @@ M = mission_t_v_h(3,:);
 V = mission_t_v_h(2,:);
 T = 780; % deg Celsius
 pH2 = 0.98; % atm?
-dt = 1; % s, time step
-A = 500;
+dt = 1; % s, time step 
 
 
-[cells, i, Volts, power] = SOFCsize(E, T, pH2, 500);
+[cells, i, V, power] = SOFCsize(E, T, pH2, 500);
 
-[H2dot,vapordot,heatdot,total_H2,total_vapor,total_heat,pdens,voltagedraw,currentdraw,airdot,total_air] = SOFC(E, T, dt, A, cells, i, Volts, power);
+[H2dot,vapordot,heatdot,total_H2,total_vapor,total_heat,pdens,voltagedraw,currentdraw,airdot,total_air] = SOFC(E,T,pH2,dt,cells);
 
 time = 0:(length(E)-1);
 time = time.*dt;
@@ -165,6 +164,13 @@ disp("The total heat the reformer needs in kJ is: ");
 disp(totalheatfromreformer);
 
 
+%% LNG Tank
+% mass fraction = mass of fuel/(mass of fuel and mass of tank)
+[tankmass] = LNGTank(LNGflowrate, dt);
+disp("The mass of the LNG tank in kg would be: ");
+disp(tankmass);
+
+
 %% steam recycle
 
 [warray,wtank, wmin, winitial, SOFCvapordot, FRneeddot, FRreleasedot, t2, excessH2O, totalexhauststeam, wtankflow] = steamrecyclewatertank(vapordot,H2Oflowrate,H2Ounreactedflowrate, 30, 15);
@@ -245,12 +251,3 @@ legend('SOFC Heat', 'Fuel Reformer Heat', ...
     'Total System Heat', fontsize=18);
 
 
-% LNG Turbine/Burner
-
-[turbine_LNG, turbine_air, turbine_steam, turbine_CO2] = LNGburner(burnerheat);
-
-
-%% LNG Tank
-
-% mass fraction = mass of fuel/(mass of fuel and mass of tank)
-[tankmass_primary, tankmass_turbine] = LNGTank(LNGflowrate, turbine_LNG, dt);

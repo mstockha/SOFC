@@ -1,99 +1,36 @@
-function [H2dot,vapordot,heatdot,total_H2,total_vapor,total_heat,pdens,voltagedraw,currentdraw, airdot,total_air] = SOFC(E,T,pH2,dt,min_cells)
+function [H2dot,vapordot,heatdot,total_H2,total_vapor,total_heat,pdens,voltagedraw,currentdraw, airdot,total_air] = SOFC(E,T,dt,A,min_cells,i,V,power)
 
-%% Estimate Voltage Equation Values
+%% Constants
+F = 96485;              % Faraday's constant (C/mol)
+n = 1;                  % number of charges/electrons transferred
+T = T + 273.15;         % convert ops temperature to K
 
-% cell voltage equation (cve) coefficients
-temp = [700,750,800];           % temperature [celsius]
-res = [0.05, 0.0367, 0.0307];   % resistance  
-i0 = [0.2327, 0.38, 0.38];      % exchange current density
-ias = [2.3, 2.8397, 3.1323];    % anodic saturation density
-ics = [2.3, 2.8292, 3.1311];    % cathodic saturation density
+%% Power analysis - Cell and Stack
 
-% linear fit equations: cve coefficents to temperature based on data
-syms t
-coeff_ias = polyfit(temp,ias,1);
-iaseq = coeff_ias(1)*t + coeff_ias(2);
-
-coeff_res = polyfit(temp,res,1);
-reseq = coeff_res(1)*t + coeff_res(2);
-
-coeff_ics = polyfit(temp,ics,1);
-icseq = coeff_ics(1)*t + coeff_ics(2);
-
-coeff_i0 = polyfit(temp,i0,1);
-i0eq = coeff_i0(1)*t + coeff_i0(2);
-
-% estimate values for given case based on temperature
-res_real = subs(reseq,t,T);
-ias_real = subs(iaseq,t,T);
-ics_real = subs(icseq,t,T);
-i0_real = subs(i0eq,t,T);
-
-
-%% Single Cell Sizing: Voltage Equation Analysis
-
-V0 = 1.121;             % my sources indicate that this should be 1.06
-R = 8.314;
-n = 1;                  % why isn't this 2, since there are 2 atoms of hydrogen?
-F = 96485;          
-pH20 = 1- pH2;
-i = 0;
-V = 0;
-T = T + 273.15;
-ntemp = 0;
-Vtemp = 10000;
-j=1;
-
-while Vtemp > 0 
-
-    i(j) = ntemp;    
-    V(j) = V0 - ntemp.*res_real - 2.*R.*T./n./F .* log(1./2 ...
-        .* (ntemp./i0_real + sqrt((ntemp./i0_real).^2 +4))) ...
-        + R.*T./2./F .* log(1 - ntemp./ias_real)- R.*T./2./F ...
-        .* log(1 + pH2.*ntemp./pH20./ias_real) + R.*T./4./F ...
-        .* log(1 - ntemp./ics_real);
-    Vtemp = V(j);
-    ntemp = ntemp + 0.01;
-    j = j +1;
-
-end
-
-V(V~=real(V)) = NaN;
-power = i.*V;
-
-figure(19)
-plot(i,V)
-xlabel('Current Density (A/cm^2)')
-ylabel('Voltage (V)')
-
-figure(20)
-plot(i,power,"LineWidth", 2);
-ylim([0 1.2]);
-xlabel("Current Density (A/cm^2)",'FontSize',13)
-ylabel("Power Density (W/cm^2)",'FontSize',13)
-
-% Use min cells to find pdens req, find current relating to that power
-% Then find, h2dot
-A = 500;            % cell area in cm^2
-
-pdens = E./min_cells./A;
-[~,k] = max(power);
-i_cut = i;
+% truncate power and current at value for maximum power
+pdens = E./min_cells./A;        % convert data to per-cell power density
+[~,k] = max(power);             % find index for maximum calculated power
+i_cut = i;                      % temporary current vector
 
 for d = 1:length(power)
-    if d > k
+    if d > k                % set values after max power index to nan
         power(d) = NaN;
         i_cut(d) = NaN;
     end
 end
 
-currentdraw = spline(power,i_cut,pdens);    % per-cell current density
-voltagedraw = spline(i,V,currentdraw);      % per-cell voltage draw
+% interpolate current and voltage draw based on calculated relations and
+% experimental power requirements
+currentdraw = spline(power,i_cut,pdens);    % current density (A/cm2)
+voltagedraw = spline(i,V,currentdraw);      % per-cell voltage draw (V)
 
 % determine total current and power
 current = currentdraw .* A ;              % total current (amps)
 P_cell = current .* voltagedraw ./1000;   % per-cell power (kJ/s)
 P_elec = P_cell .* min_cells;             % total power (kJ/s)
+
+
+%% Determine reactant flows
 
 % use Nernst relation to find molar hydrogen flow
 h2mol = min_cells .* current ./ (2*F); % kg/s
@@ -127,10 +64,10 @@ Enthalpies_Steam = [-231.33 -230.6 -229.87 -229.13 -228.39 -227.64 ...
 % fit curve 
 slope_steam = polyfit(Temps, Enthalpies_Steam, 1);
 % determine reaction enthalpies (kJ/mol)
-RxnEnthalpy_Steam = polyval(slope_steam,T)
+RxnEnthalpy_Steam = polyval(slope_steam,T);
 
 % net reaction enthalpy calculation
-heatdot = h2mol.*RxnEnthalpy_Steam + P_elec;
-total_heat = sum(heatdot.*dt);
+heatdot = h2mol.*RxnEnthalpy_Steam + P_elec;  % heat flow rate (kJ/s)
+total_heat = sum(heatdot.*dt);      % integrate for total heat (kJ)
 
 end
