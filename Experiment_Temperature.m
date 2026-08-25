@@ -84,6 +84,11 @@ Input_air = airIn_SOFC + burner_air;
 Output_Steam = steam_SOFC + burner_steam;
     % Exhaust CO2
 Output_CO2 = CO2_fuelref + burner_CO2;
+    % Weights
+TotalWeight = LNG_Tank + methane_SOFC + burnerTank + burner_methane + water;
+
+
+%% Analyze Results
 
 % optimized inputs
 [LNG_min, Temp_LNG] = min(Input_LNG);  Temp_minFuel = Temps(Temp_LNG);
@@ -96,6 +101,8 @@ Output_CO2 = CO2_fuelref + burner_CO2;
 [CO2_min, Temp_CO2] = min(Output_CO2);  Temp_minCO2 = Temps(Temp_CO2);
 [CO_min, Temp_CO] = min(CO_fuelref);  Temp_minCO = Temps(Temp_CO);
 [RejectedHeat_min, Temp_heat] = min(RejectedHeat);  Temp_minHeat = Temps(Temp_heat);
+
+
 
 %% plotting results
 figure(1)
