@@ -1,6 +1,6 @@
-% Title: VoltageEqtnFittingData.m
+% Title: EnthalpyInterpolation.m
 % Author: Miranda Stockhausen, mstockha@umich.edu
-% Date Written: 27 August 2026
+% Date Written: 28 August 2026
 % 
 % % % Description: % % % 
 % This function interpolates/extrapolates the enthalpy of formation of gaseous water
