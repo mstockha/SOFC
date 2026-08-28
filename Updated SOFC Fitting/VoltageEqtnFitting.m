@@ -65,8 +65,8 @@ lower = [0.1 0.0001 0.0001 0.0001];     % lower bounds
 
 % curve fit for each dataset
 [parameters_700, residual_700] = lsqcurvefit(Veqtn_700, initials, Current_700, Voltage_700, lower, upper);
-[parameters_750, residual_750] = lsqcurvefit(Veqtn_750, initials, Current_750, Voltage_750', lower, upper);
-[parameters_800, residual_800] = lsqcurvefit(Veqtn_800, initials, Current_800, Voltage_800', lower, upper);
+[parameters_750, residual_750] = lsqcurvefit(Veqtn_750, initials, Current_750, Voltage_750, lower, upper);
+[parameters_800, residual_800] = lsqcurvefit(Veqtn_800, initials, Current_800, Voltage_800, lower, upper);
 % parameters_700 = lsqnonlin;
 % parameters_750 = lsqcurvefit(Veqtn_750, initials, Current_750, Voltage_750, lower, upper);
 % parameters_800 = lsqcurvefit(Veqtn_800, initials, Current_800, Voltage_800, lower, upper);
