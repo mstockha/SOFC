@@ -4,7 +4,7 @@ pH2 = 0.98;         % partial pressure of Hydrogen (atm)
 dt = 1;             % time step (seconds)
 A = 500;            % cell reacting area (cm^2)
 PowerSplit = 1;     % percentage of power supplied by SOFC
-delTemp = 10;         % temperature step for iteration
+delTemp = 10;       % temperature step for iteration
 
 
 %% Mission Data
@@ -13,7 +13,9 @@ load("FC_power_required.mat");          % load data workspace
 
 % convert power consumption to Watts, apply SOFC/turbine power split
     % total kW power consumed --> W power consumed from SOFC
-E = thrust_power_required(2,:).*PowerSplit.*1000;   
+E = thrust_power_required(2,:).*PowerSplit.*1000;
+    % total kW power consumed --> W power consumed from turbine
+P = thrust_power_required(2,:).*(1-PowerSplit).*1000;
 
 % for negative power consumption values, set power to zero
 for j = 1:8640
@@ -57,11 +59,12 @@ cellNum = zeros(1,n);
 %% data collection
 for j = 1:n
     j
-    [totalmethane, tankmass_primary, total_heat, total_air, totalCO, totalCO2, wmin, winitial, totalexhauststeam, burnerheat, turbine_LNG, turbine_air, turbine_steam, turbine_CO2, tankmass_turbine, cells] = SOFCdriver(Temps(j), E, pH2, dt, A);
+    [Turbine_Model, SOFC_Model, FuelReformation, SteamRecycling, HeatFlow, DuctBurnHeater, TankMass, SystemReactants] = SOFCdriver(Temps(j), E, P, pH2, dt, A)
+    [totalmethane, tankmass_primary, total_heat, total_air, totalCO, totalCO2, wmin, winitial, totalexhauststeam, burnerheat, turbine_LNG, turbine_air, turbine_steam, turbine_CO2, tankmass_turbine, cells] = SOFCdriver(Temps(j), E, P, pH2, dt, A);
     methane_SOFC(j) = totalmethane;
     LNGtank_Primary(j) = tankmass_primary;
     RejectedHeat(j) = total_heat;
-    water(j) = wmin;
+    water(j) = winitial;
     steam_SOFC(j) = totalexhauststeam;
     airIn_SOFC(j) = total_air;
     CO_fuelref(j) = totalCO;
@@ -75,7 +78,7 @@ for j = 1:n
     cellNum(j) = cells;
 end
 
-% determine total reactants, SOFC + burner
+%% determine total reactants, SOFC + burner
     % Input LNG
 Input_LNG = methane_SOFC + burner_methane;
     % Input air
@@ -84,8 +87,6 @@ Input_air = airIn_SOFC + burner_air;
 Output_Steam = steam_SOFC + burner_steam;
     % Exhaust CO2
 Output_CO2 = CO2_fuelref + burner_CO2;
-    % Weights
-TotalWeight = LNG_Tank + methane_SOFC + burnerTank + burner_methane + water;
 
 
 %% Analyze Results
@@ -102,17 +103,21 @@ TotalWeight = LNG_Tank + methane_SOFC + burnerTank + burner_methane + water;
 [CO_min, Temp_CO] = min(CO_fuelref);  Temp_minCO = Temps(Temp_CO);
 [RejectedHeat_min, Temp_heat] = min(RejectedHeat);  Temp_minHeat = Temps(Temp_heat);
 
+  % Weights
+TotalWeight = LNGtank_Primary + methane_SOFC + burnerTank + burner_methane + water;
+[minWeight, Temp_weight] = min(TotalWeight); Temp_minCarriage = Temps(Temp_weight);
 
 
 %% plotting results
 figure(1)
-title('Reactant Consumption Trends')
 subplot(4,1,1)
 plot(Temps, cellNum)
+title('Reactant Consumption Trends')
 xlabel('Temperature (Celsius)')
 ylabel('Installed SOFC Cells Required (units)')
 hold on
-plot(Temp_minCells, Cells_min, 'pentagram')
+plot(Temp_minCells, Cells_min, '*')
+plot(Temp_minCarriage, cellNum(Temp_weight), 'pentagram')
 hold off
 
 subplot(4,1,2)
@@ -120,17 +125,19 @@ plot(Temps, Input_LNG, 'k-')
 xlabel('Temperature (Celsius)')
 ylabel('Total Methane Consumed (kg)')
 hold on
-plot(Temp_minFuel, LNG_min, 'pentagram')
+plot(Temp_minFuel, LNG_min, '*')
 plot(Temps, methane_SOFC, 'r--', Temps, burner_methane, 'b.-')
+plot(Temp_minCarriage, Input_LNG(Temp_weight), 'pentagram')
 hold off
-legend('Total LNG', 'SOFC Dedicatied LNG', 'Burner Dedicated LNG')
+legend('Total LNG', 'Minimum LNG', 'SOFC Dedicatied LNG', 'Burner Dedicated LNG', 'Minimum Weight')
 
 subplot(4,1,3)
 plot(Temps, water)
 xlabel('Temperature (Celsius)')
 ylabel('Total Water Carriage (kg)')
 hold on
-plot(Temp_minH2O, Water_min, 'pentagram')
+plot(Temp_minH2O, Water_min, '*')
+plot(Temp_minCarriage, water(Temp_weight), 'pentagram')
 hold off
 
 subplot(4,1,4)
@@ -138,18 +145,20 @@ plot(Temps, Input_air)
 xlabel('Temperature (Celsius)')
 ylabel('Total Air Consumption (kg)')
 hold on
-plot(Temp_minAir, Air_min, 'pentagram')
+plot(Temp_minAir, Air_min, '*')
+plot(Temp_minCarriage, Input_air(Temp_weight), 'pentagram')
 hold off
 
 
 figure(2)
-title('Exhaust Rejection Trends')
 subplot(4,1,1)
 plot(Temps, Output_Steam)
+title('Exhaust Rejection Trends')
 xlabel('Temperature (Celsius)')
 ylabel('Total Steam Exhaust (kg)')
 hold on
-plot(Temp_minSteam, Steam_min, 'pentagram')
+plot(Temp_minSteam, Steam_min, '*')
+plot(Temp_minCarriage, Output_Steam(Temp_weight), 'pentagram')
 hold off
 
 subplot(4,1,2)
@@ -157,7 +166,8 @@ plot(Temps, CO_fuelref)
 xlabel('Temperature (Celsius)')
 ylabel('Total CO Exhaust (kg)')
 hold on
-plot(Temp_minCO, CO_min, 'pentagram')
+plot(Temp_minCO, CO_min, '*')
+plot(Temp_minCarriage, CO_fuelref(Temp_weight), 'pentagram')
 hold off
 
 subplot(4,1,3)
@@ -165,7 +175,8 @@ plot(Temps, Output_CO2)
 xlabel('Temperature (Celsius)')
 ylabel('Total CO_2 Exhaust (kg)')
 hold on
-plot(Temp_minCO2, CO2_min, 'pentagram')
+plot(Temp_minCO2, CO2_min, '*')
+plot(Temp_minCarriage, Output_CO2(Temp_weight), 'pentagram')
 hold off
 
 subplot(4,1,4)
@@ -173,19 +184,22 @@ plot(Temps, RejectedHeat)
 xlabel('Temperature (Celsius)')
 ylabel('Total Waste Heat (kJ)')
 hold on
-plot(Temp_minHeat, RejectedHeat_min, 'pentagram')
+plot(Temp_minHeat, RejectedHeat_min, '*')
+plot(Temp_minCarriage, RejectedHeat(Temp_weight), 'pentagram')
 hold off
 
 
 figure(3)
 plot(Temps, Input_LNG, 'k-')
+title('LNG Flow Analysis')
 xlabel('Temperature (Celsius)')
 ylabel('Total Methane Consumed (kg)')
 hold on
-plot(Temp_minFuel, LNG_min, 'pentagram')
+plot(Temp_minFuel, LNG_min, '*')
 plot(Temps, methane_SOFC, 'r--', Temps, burner_methane, 'b.-')
+plot(Temp_minCarriage, Input_LNG(Temp_weight), 'pentagram')
 hold off
-legend('Total LNG', 'Minimum LNG Burn', 'SOFC Dedicatied LNG', 'Burner Dedicated LNG')
+legend('Total LNG', 'Minimum LNG Burn', 'SOFC Dedicatied LNG', 'Burner Dedicated LNG', 'Minimum Carriage')
 
 % figure(3)
 % plot(time,burner(:,1))
