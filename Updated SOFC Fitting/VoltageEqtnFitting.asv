@@ -54,9 +54,9 @@ ylim([0,1.2])
 % Veqtn_750 = @(j, params) (1.06 - j.*params(2) - (8.314.*750)/(params(1).*2.*96485.34) .* (log(j./params(3)) + (1 + params(1)).*log(params(4)./(params(4) - j)))) - Voltage_750;
 % Veqtn_800 = @(j, params) (1.06 - j.*params(2) - (8.314*800)/(params(1).*2.*96485.34) .* (log(j./params(3)) + (1 + params(1)).*log(params(4)./(params(4) - j)))) - Voltage_800;
 
-Veqtn_700 = @(j, params) 1.06 - j.*params(2) - (8.314.*700)./(params(1).*2.*96485.34) .* (log(max(j./params(3), eps)) + (1 + params(1)).*log(max(params(4)./abs(params(4) - j), eps)));
-Veqtn_750 = @(j, params) 1.06 - j.*params(2) - (8.314.*750)./(params(1).*2.*96485.34) .* (log(max(j./params(3), eps)) + (1 + params(1)).*log(max(params(4)./abs(params(4) - j), eps)));
-Veqtn_800 = @(j, params) 1.06 - j.*params(2) - (8.314.*800)./(params(1).*2.*96485.34) .* (log(max(j./params(3), eps)) + (1 + params(1)).*log(max(params(4)./abs(params(4) - j), eps)));
+Veqtn_700 = @(j, params) (1.06 - j.*params(2) - (8.314.*700)./(params(1).*2.*96485.34) .* (log(j./params(3)) + (1 + params(1)).*log(max(params(4)./abs(params(4) - j)))));
+Veqtn_750 = @(j, params) (1.06 - j.*params(2) - (8.314.*750)./(params(1).*2.*96485.34) .* (log(j./params(3)) + (1 + params(1)).*log(params(4)./abs(params(4) - j))));
+Veqtn_800 = @(j, params) (1.06 - j.*params(2) - (8.314.*800)./(params(1).*2.*96485.34) .* (log(j./params(3)) + (1 + params(1)).*log(params(4)./abs(params(4) - j))));
 
 
 % Set parameter conditions (true for all temperatures)
