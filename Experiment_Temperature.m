@@ -3,8 +3,8 @@
 pH2 = 0.98;         % partial pressure of Hydrogen (atm)
 dt = 1;             % time step (seconds)
 A = 500;            % cell reacting area (cm^2)
-PowerSplit = 0.1;   % percentage of power supplied by SOFC  
-delTemp = 50;        % temperature step for iteration
+PowerSplit = 1;   % percentage of power supplied by SOFC  
+delTemp = 20;        % temperature step for iteration
 
 
 %% Mission Data
