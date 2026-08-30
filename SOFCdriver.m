@@ -126,11 +126,12 @@ DuctBurnHeater.OutflowCarbonDiox = duct_CO2;
 %% LNG Tank
 
 % mass fraction = mass of fuel/(mass of fuel and mass of tank)
-[tankmass_primary, tankmass_turbine] = LNGTank(LNGflowrate, turbine_LNG, dt);
+[tankmass_primary, tankmass_turbine, tankmass_burner] = LNGTank(LNGflowrate, turbine_LNG, duct_burn_LNG, dt);
 
 % build struct for LNG tanks
 TankMass.Primary_SOFC = tankmass_primary;
 TankMass.Turbine = tankmass_turbine;
+TankMass.DuctBurner = tankmass_burner;
 
 
 %% System Reactant Totals
@@ -148,7 +149,7 @@ SystemReactants.H2 = SOFC_Model.Reactants.TotalInflow_H2;
 % Steam (SOFC, turbine, duct)
 SystemReactants.Steam = sum(Turbine_Model.Outflow.Steam .* dt) ...
     + SOFC_Model.Reactants.TotalSteam ...
-    + sum(DuctBurnHeater.OutflowSteam .* dt)
+    + sum(DuctBurnHeater.OutflowSteam .* dt);
 
 % Air (SOFC, turbine, duct)
 SystemReactants.AirFlow = Turbine_Model.Inflow.Air ...
@@ -158,7 +159,8 @@ SystemReactants.AirTotal = sum(Turbine_Model.Inflow.Air .* dt) ...
     + sum(DuctBurnHeater.InflowAir .* dt);
 
     % determine SOFC bypass ratio for air
-SOFC_Model.Performance.BypassRatio = SOFC_Model.Performance.AirInflow ./ SystemReactants.Airflow;
+SOFC_Model.Performance.BypassRatio = (Turbine_Model.Inflow.Air ...
+    + DuctBurnHeater.InflowAir) ./ SystemReactants.AirFlow;
 
 % Carbon Dioxide (turbine, fuel reformer, duct)
 SystemReactants.CarbonDiox = sum(Turbine_Model.Outflow.CarbonDiox.*dt) ...

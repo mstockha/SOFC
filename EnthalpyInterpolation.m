@@ -28,6 +28,6 @@ Enthalpies_Steam = [-231.33 -230.6 -229.87 -229.13 -228.39 -227.64 ...
 slope_steam = polyfit(Temps, Enthalpies_Steam, 1);
 
 % determine reaction enthalpies (kJ/mol)
-SteamEnthalpy = polyval(slope_steam,T);
+SteamEnthalpy = polyval(slope_steam, Temperature);
 
 end

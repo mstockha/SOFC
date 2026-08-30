@@ -1,10 +1,4 @@
-function [totalheatflowrate, heatdotTurbine, heatdotLNGheating, heatdotH2O, heatdotair, heatburner] = HeatExchanger(turbine_heat, LNGflowrate, heatdotfuelreformer, heatdotSOFC, wtankflow, efficiency, Ti_air, Tf_air, airfr)
-
-%% Convert turbine heat
-
-% heat production is negative heat flow!
-heatdotTurbine = -1.*turbine_heat;
-
+function [totalheatflowrate, heatdotLNGheating, heatdotH2O, heatdotair, heatburner] = HeatExchanger(turbine_heat, LNGflowrate, heatdotfuelreformer, heatdotSOFC, wtankflow, efficiency, Ti_air, Tf_air, airfr)
 
 %% LNG Recuperator Heating
 
@@ -58,7 +52,7 @@ heatdotair = airfr .* cpair .* deltaTair;   % Heat flow (kJ/s)
 %% determine any additional heat required from duct burning LNG
 
 % determine net heat without burner
-heatbalance = heatdotTurbine + heatdotLNGheating + heatdotfuelreformer ...
+heatbalance = turbine_heat + heatdotLNGheating + heatdotfuelreformer ...
     + (efficiency*heatdotSOFC) + heatdotH2O + heatdotair;
 
 % preallocate mission burner heat vector
@@ -74,7 +68,8 @@ end
 
 %% total SOFC propulsion system heat
 
-totalheatflowrate = heatdotLNGheating + heatdotfuelreformer ...
-    + (efficiency*heatdotSOFC) + heatdotH2O + heatdotair + heatburner;
+totalheatflowrate = turbine_heat + heatdotLNGheating ...
+    + heatdotfuelreformer + (efficiency*heatdotSOFC) + heatdotH2O ...
+    + heatdotair + heatburner;
 
 end

@@ -8,7 +8,7 @@ AFR_LNG = 17.19;        % air to fuel ratio
 
 %% Calculate reactants flow
 % calculate LNG flow from power output (net power)
-turbine_LNG = P ./ (cycleEff.*LHV_LNG);
+turbine_LNG = P./ 1000 ./ (cycleEff.*LHV_LNG);
 
 % calculate reactant and product mass flow rates
 turbine_air = AFR_LNG .* turbine_LNG;
@@ -16,6 +16,6 @@ turbine_steam = 2.25 .* turbine_LNG;
 turbine_CO2 = 2.74 .* turbine_LNG; 
 
 % calculate heat output
-turbine_heat = captureEff .* P .* (1 - cycleEff) ./ cycleEff
+turbine_heat = -1 .* captureEff .* P .* (1 - cycleEff) ./ cycleEff ./ 1000;
 
 end
