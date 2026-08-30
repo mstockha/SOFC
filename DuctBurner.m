@@ -2,6 +2,8 @@ function [duct_burn_LNG, duct_air, duct_steam, duct_CO2] = DuctBurner(burnerheat
 
 %% Data-driven constants
 ductEff = 0.4;         % cycle efficiency
+LHV_LNG = 48600;        % lower heating value (kJ/kg)
+AFR_LNG = 17.19;        % air to fuel ratio
 
 %% Calculate reactants flow
 % calculate LNG flow from burner heat

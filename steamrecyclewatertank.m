@@ -10,7 +10,7 @@ Recycledelay = zeros(1,FRtimedelay);
 RecycleExhaust = SOFC(end-SOFCdelay:end) + FRrelease(end-Recycledelay:end);
 
 % remove exhaust segments from SOFC and FR released vaport vectors
-SOFC = [SOFCdelay SOFC(1:end-SOFCdelay)];
+SOFC = [SOFCdelay SOFC(1:end-SOFCtimedelay)];
 FRrelease = [Recycledelay FRrelease(1:end-FRtimedelay)];
 
 % negative wbalance means excess steam is exhausted tank, positive means steam is needed from tank
