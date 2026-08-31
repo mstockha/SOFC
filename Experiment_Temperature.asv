@@ -257,8 +257,8 @@ plot(Temps, air_duct, Temp_minAir, Air_min, '*')
 hold off
 title('Air Flow Analysis')
 xlabel('Temperature (Celsius)')
-ylabel('Total Air Consumed (kg)')
-legend('Total Airflow', 'Turbine Airflow', 'SOFC Airflow', 'Duct Burn Flow', 'Minimum Air Flow')
+ylabel('Total Methane Consumed (kg)')
+legend('Total Airflow', 'Turbine Airflow', 'SOFC Airflow', 'Duct Burn Flow', 'Minimum LNG')
 
 yyaxis right
 plot(Temps, BypassRatio)
@@ -270,20 +270,16 @@ plot(Temps, steam_Total, Temps, steam_turbine, Temps, steam_SOFC)
 hold on
 plot(Temps, steam_duct, Temp_minSteam, Steam_min, '*')
 hold off
-title('Steam Flow Analysis')
+title('Air Flow Analysis')
 xlabel('Temperature (Celsius)')
-ylabel('Total Steam Output (kg)')
-legend('Total Steam', 'Turbine Steam', 'SOFC Steam', 'Duct Burn Steam', 'Minimum Steam')
+ylabel('Total Methane Consumed (kg)')
+legend('Total Airflow', 'Turbine Airflow', 'SOFC Airflow', 'Duct Burn Flow', 'Minimum LNG')
+
+yyaxis right
+plot(Temps, BypassRatio)
+ylabel('Bypass Ratio')
 
 
-figure(6)
-plot(Temps,dioxide_Total, Temps, dioxide_turbine, Temps, dioxide_FR)
-hold on
-plot(Temps, dioxide_duct, Temp_CO2, CO2_min, '*')
-title('Carbon Dioxide Analysis')
-xlabel('Temperature (Celsius)')
-ylabel('Total CO_2 Output (kg)')
-legend('Total CO_2', 'Turbine CO_2', 'Fuel Reformer CO_2', 'Duct Burn CO_2', 'Minimum CO_2')
 
 
 figure(7)
