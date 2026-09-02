@@ -1,10 +1,4 @@
-function [min_cells, CellParams, i, V, power] = SOFCsize(E,T,A)
-% local function for cell voltage equation
-Veqtn = @(params, j) 1.06 - j.*params(2) ...
-    - (8.314.*params(5))./(params(1).*2.*96485.34) .* (log(j) - log(params(3))...
-    + (1 + params(1)).*log(params(4)) - log(params(4) - j));
-% params = [a, Ri, j0, jL, T (Kelvin)]
-
+function [min_cells, i, V, power] = SOFCsize(E,T,pH2,A)
 
 %% Estimate Voltage Equation Values
 % Model: Voltage Equation for each temperature
@@ -16,36 +10,32 @@ Veqtn = @(params, j) 1.06 - j.*params(2) ...
     % jL = limiting current density
 
 % cell voltage equation (cve) best fit coefficients
-temps = [873 973 1073 1173 1273];           % temperature [celsius]
-a_set = [0.253437897 0.298131461 0.357084494 0.413494343 0.47051649];
-j0_set = [0.053941529	0.075756836	0.102922008	0.126538326	0.141278421];
-jL_set = [1.18854347	1.55782659	2.006509612	2.270223529	2.443858577];
+temp = [700,750,800];           % temperature [celsius]
+a_set = [0.314316089366992 0.428130999067575 0.463210831501386];
+j0_set = [0.0501096183073099 0.0366926976186371 0.0492195525169935];
+jL_set = [2.32125351949934 2.92470041660807 3.32757120645683];
 
 % linear fit for best fit parameters: cve coefficents fit as Var = f(T)
-T = T + 273;
-
-params_a = polyfit(temps, a_set, 1);     a = polyval(params_a, T);
-params_j0 = polyfit(temps, j0_set, 1);   j0 = polyval(params_j0, T);
-params_jL = polyfit(temps, jL_set, 2);   jL = polyval(params_jL, T);
+params_a = polyfit(temp, a_set, 2);     a = polyval(params_a, T);
+params_j0 = polyfit(temp, j0_set, 2);   j0 = polyval(params_j0, T);
+params_jL = polyfit(temp, jL_set, 2);   jL = polyval(params_jL, T);
 Ri = 0.1;        % dRi/dt = 0 per curve fitting
-
-CellParams = [a, Ri, j0, jL];
 
 
 %% Single Cell Sizing: Voltage Equation Analysis
+
+% set constants for cell voltage equation
+V0 = 1.06;             % Nernst voltage (V)
+R = 8.314;              % universal gas constant (J/mol*K)
+n = 2;                  % number of charges/electrons transferred
+F = 96485.34;              % Faraday's constant (C/mol)
+
 % set current density from 0 to limiting current density (A/cm^2)
-i = 0:0.01:(jL - 0.01); i(1) = 0.0001;
+i = 0:0.01:(jL - 0.01);   
 
 % calculate voltage based on parameters (V)
-parameters = [CellParams, T];
-V = Veqtn(parameters, i);
-
-for count = 1:length(V)
-    if V(count) < 0
-        V(count) = 0;
-    end
-end
-
+V = V0 - i.*Ri - (R.*T)./(a.*n.*F) .* (log(i./j0) ...
+    + (1 + a).*log(jL./abs(jL - i)));
 
 % calculate cell power (W/cm^2)
 power = i.*V;
@@ -62,6 +52,8 @@ min_cells = ceil(min_cells);        % round up to nearest whole number
 
 
 %% Verify model - output i-V and i-P curves
+
+load("VoltageFittingData.mat");     % load experimental dataset
 
 figure(101) % I-V Curve
 plot(i,V)

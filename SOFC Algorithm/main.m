@@ -46,6 +46,7 @@ Max_iteration=5000; % Maximum numbef of iterations
 
 [Best_score,Best_pos,WOA_cg_curve]=WOA(SearchAgents_no,Max_iteration,lb,ub,dim,fobj);
 
+%%
 figure('Position',[269   240   660   290])
 %Draw search space
 subplot(1,2,1);

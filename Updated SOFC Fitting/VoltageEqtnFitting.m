@@ -15,7 +15,8 @@
 load("VoltageFittingData.mat");     % load experimental dataset
 
 figure(1)       % experimental voltage curves
-plot(Current_600, Voltage_600, '')
+yyaxis left
+plot(Current_600, Voltage_600)
 hold on
 plot(Current_700, Voltage_700, Current_800, Voltage_800)
 plot(Current_900, Voltage_900, Current_1000, Voltage_1000)
@@ -23,11 +24,9 @@ hold off
 title('Cell Voltage Data')
 xlabel('Current Density (A/cm^2)')
 ylabel('Cell Voltage (V)')
-legend('600 C', '700 C', '800 C', '900 C', '1000 C')
-xlim([-0.5,2.5])
-ylim([0,1])
+ylim([0,1.2])
 
-figure(2)       % experimental power curves
+yyaxis right        % experimental power curves
 plot(i_600, Power_600, i_700, Power_700, i_800, Power_800)
 hold on
 plot(i_900, Power_900, i_1000, Power_1000)
@@ -35,9 +34,10 @@ hold off
 title('Power Density Data')
 xlabel('Current Density (A/cm^2)')
 ylabel('Power Density (W/cm^2)')
-legend('600 C', '700 C', '800 C', '900 C', '1000 C')
-xlim([-0.5,2.5])
-ylim([0,0.8])
+legend('600', '700', '800', '900', '1000', '600', '700', '800', '900', '1000')
+xlim([0,3.5])
+ylim([0,1.2])
+
 
 
 %% Curve Fitting: nonlin least-squares fit I-V curve for each Temperature
@@ -49,11 +49,15 @@ ylim([0,0.8])
     % Ri = Area specific resistance
     % j0 = exchange current density
     % jL = limiting current density
-Veqtn_600 = @(j, params) 1.06 - j.*params(2) - (8.314.*873)./(params(1).*2.*96485.34) .* (log(max(j./params(3), eps)) + (1 + params(1)).*log(max(params(4)./abs(params(4) - j), eps)));
-Veqtn_700 = @(j, params) 1.06 - j.*params(2) - (8.314.*973)./(params(1).*2.*96485.34) .* (log(max(j./params(3), eps)) + (1 + params(1)).*log(max(params(4)./abs(params(4) - j), eps)));
-Veqtn_800 = @(j, params) 1.06 - j.*params(2) - (8.314.*1073)./(params(1).*2.*96485.34) .* (log(max(j./params(3), eps)) + (1 + params(1)).*log(max(params(4)./abs(params(4) - j), eps)));
-Veqtn_900 = @(j, params) 1.06 - j.*params(2) - (8.314.*1173)./(params(1).*2.*96485.34) .* (log(max(j./params(3), eps)) + (1 + params(1)).*log(max(params(4)./abs(params(4) - j), eps)));
-Veqtn_1000 = @(j, params) 1.06 - j.*params(2) - (8.314.*1273)./(params(1).*2.*96485.34) .* (log(max(j./params(3), eps)) + (1 + params(1)).*log(max(params(4)./abs(params(4) - j), eps)));
+
+    
+    
+    
+Veqtn_600 = @(params, j) 1.06 - j.*params(2) - (8.314.*873)./(params(1).*2.*96485.34) .* (log(j) - log(params(3)) + (1 + params(1)).*log(params(4)) - log(params(4) - j));
+Veqtn_700 = @(params, j) 1.06 - j.*params(2) - (8.314.*973)./(params(1).*2.*96485.34) .* (log(j) - log(params(3)) + (1 + params(1)).*log(params(4)) - log(params(4) - j));
+Veqtn_800 = @(params, j) 1.06 - j.*params(2) - (8.314.*1073)./(params(1).*2.*96485.34) .* (log(j) - log(params(3)) + (1 + params(1)).*log(params(4)) - log(params(4) - j));
+Veqtn_900 = @(params, j) 1.06 - j.*params(2) - (8.314.*1173)./(params(1).*2.*96485.34) .* (log(j) - log(params(3)) + (1 + params(1)).*log(params(4)) - log(params(4) - j));
+Veqtn_1000 = @(params, j) 1.06 - j.*params(2) - (8.314.*1273)./(params(1).*2.*96485.34) .* (log(j) - log(params(3)) + (1 + params(1)).*log(params(4)) - log(params(4) - j));
 
 % Set parameter conditions (true for all temperatures)
 initials = [0.3 0.04 0.10 2.5];           % initial guesses
@@ -79,16 +83,18 @@ V800 = Veqtn_800(parameters_800, Current_800);
 V900 = Veqtn_900(parameters_900, Current_900);
 V1000 = Veqtn_1000(parameters_1000, Current_1000);
 
-% due to square root operation, some values will be imaginary - set to NaN
-V700(V700~=real(V700)) = NaN;
-V800(V800~=real(V800)) = NaN;
+V600_p = Veqtn_600(parameters_600, i_600);
+V700_p = Veqtn_700(parameters_700, i_700);
+V800_p = Veqtn_800(parameters_800, i_800);
+V900_p = Veqtn_900(parameters_900, i_900);
+V1000_p = Veqtn_1000(parameters_1000, i_1000);
 
 % Power calculation from calculated voltage
-P600 = V600 .* Current_600;
-P700 = V700 .* Current_700;
-P800 = V800 .* Current_800;
-P900 = V900 .* Current_900;
-P1000 = V1000 .* Current_1000;
+P600 = V600_p .* i_600;
+P700 = V700_p .* i_700;
+P800 = V800_p .* i_800;
+P900 = V900_p .* i_900;
+P1000 = V1000_p .* i_1000;
 
 
 %% Format Outputs & Validation
@@ -108,31 +114,31 @@ disp(Outputs)
 
 % plot theoretical results
 figure(3)   % Voltage
-plot(Current_600, Voltage_600, 'o', Current_600, V600, '-k')
+plot(Current_600, Voltage_600, 'o', Current_600, V600)
 hold on
-plot(Current_700, Voltage_700, 'diamond', Current_700, V700, '-k')
-plot(Current_800, Voltage_800, '*', Current_800, V800, 'k-')
-plot(Current_900, Voltage_900, 'square', Current_900, V900, 'k-')
-plot(Current_800, Voltage_1000, '^', Current_1000, V1000, 'k-')
+plot(Current_700, Voltage_700, 'diamond', Current_700, V700)
+plot(Current_800, Voltage_800, '*', Current_800, V800)
+plot(Current_900, Voltage_900, 'square', Current_900, V900) 
+plot(Current_1000, Voltage_1000, '^', Current_1000, V1000)
 xlabel('Current Density (A/cm^2)')
 ylabel('Cell Voltage (V)')
 legend('Experimental Data - 600', 'Fitted Curve - 600', ...
     'Experimental Data - 700', 'Fitted Curve - 700', ...
     'Experimental Data - 800', 'Fitted Curve - 800', ...
     'Experimental Data - 900', 'Fitted Curve - 900', ...
-    'Experimental Data - 1000', 'Fitted Curve -1000')
+    'Experimental Data - 1000', 'Fitted Curve - 1000')
 
 figure(4)   % Power
-plot(Current_600, Power_600, 'o', Current_600, P600, '-k')
+plot(i_600, Power_600, 'o', i_600, P600)
 hold on
-plot(i_700, Power_700, 'diamond', i_700, P700, '-k')
-plot(i_800, Power_800, '*', i_800, P800, 'k-')
-plot(i_900, Power_900, 'square', i_900, P900, 'k-')
-plot(i_800, Power_1000, '^', i_1000, P1000, 'k-')
+plot(i_700, Power_700, 'diamond', i_700, P700)
+plot(i_800, Power_800, '*', i_800, P800)
+plot(i_900, Power_900, 'square', i_900, P900)    
+plot(i_1000, Power_1000, '^', i_1000, P1000)
 xlabel('Current Density (A/cm^2)')
 ylabel('Cell Power Density (W/cm^2)')
 legend('Experimental Data - 600', 'Fitted Curve - 600', ...
     'Experimental Data - 700', 'Fitted Curve - 700', ...
     'Experimental Data - 800', 'Fitted Curve - 800', ...
     'Experimental Data - 900', 'Fitted Curve - 900', ...
-    'Experimental Data - 1000', 'Fitted Curve -1000')
+    'Experimental Data - 1000', 'Fitted Curve - 1000')

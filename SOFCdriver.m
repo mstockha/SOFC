@@ -1,4 +1,4 @@
-function [Turbine_Model, SOFC_Model, FuelReformation, SteamRecycling, HeatFlow, DuctBurnHeater, TankMass, SystemReactants] = SOFCdriver(T, E, P, pH2, dt, A)
+function [Turbine_Model, SOFC_Model, FuelReformation, SteamRecycling, HeatFlow, DuctBurnHeater, TankMass, SystemReactants] = SOFCdriver(T, E, P, dt, A)
 
 %% Turbine Flows
 
@@ -16,11 +16,12 @@ Turbine_Model.Outflow.Heat = turbine_heat;
 %% SOFC Cell Sizing
 
 % Note: outputs two figure (101, 102) to verify the i-V and i-P curves
-[cells, i, V, power] = SOFCsize(E, T, pH2, A);
-
+[cells, CellParams, i, V, power] = SOFCsize(E,T,A);
+% [cells, i, V, power] = SOFCsize_Original(E,T,A);
 % Struct for specifications: geometry and theoretical cell performance
 SOFC_Model.Specs.Area = A;
 SOFC_Model.Specs.CellNum = cells;
+SOFC_Model.Specs.CellFitParams = CellParams;
 SOFC_Model.Specs.i = i;
 SOFC_Model.Specs.Vcell = V;
 SOFC_Model.Specs.Power = power;
@@ -132,6 +133,7 @@ DuctBurnHeater.OutflowCarbonDiox = duct_CO2;
 TankMass.Primary_SOFC = tankmass_primary;
 TankMass.Turbine = tankmass_turbine;
 TankMass.DuctBurner = tankmass_burner;
+TankMass.Total = tankmass_primary + tankmass_burner + tankmass_turbine;
 
 
 %% System Reactant Totals
@@ -159,8 +161,10 @@ SystemReactants.AirTotal = sum(Turbine_Model.Inflow.Air .* dt) ...
     + sum(DuctBurnHeater.InflowAir .* dt);
 
     % determine SOFC bypass ratio for air
+
 SOFC_Model.Performance.BypassRatio = SOFC_Model.Performance.AirInflow ...
     ./ (Turbine_Model.Inflow.Air + DuctBurnHeater.InflowAir);
+SOFC_Model.Performance.BypassRatio(1) = 0;
 
 % Carbon Dioxide (turbine, fuel reformer, duct)
 SystemReactants.CarbonDiox = sum(Turbine_Model.Outflow.CarbonDiox.*dt) ...

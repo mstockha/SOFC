@@ -2,7 +2,7 @@ function [H2dot,vapordot,heatdot,total_H2,total_vapor,total_heat,pdens,voltagedr
 
 %% Constants
 F = 96485;              % Faraday's constant (C/mol)
-n = 1;                  % number of charges/electrons transferred
+n = 2;                  % number of charges/electrons transferred
 T = T + 273.15;         % convert ops temperature to K
 
 %% Power analysis - Cell and Stack
@@ -22,7 +22,15 @@ end
 % interpolate current and voltage draw based on calculated relations and
 % experimental power requirements
 currentdraw = spline(power,i_cut,pdens);    % current density (A/cm2)
+
+for count = 1:length(currentdraw)
+    if currentdraw(count) < 0
+        currentdraw(count) = 0;
+    end
+end
+
 voltagedraw = spline(i,V,currentdraw);      % per-cell voltage draw (V)
+
 
 % determine total current and power
 current = currentdraw .* A ;              % total current (amps)
@@ -33,7 +41,7 @@ P_elec = P_cell .* min_cells;             % total power (kJ/s)
 %% Determine reactant flows
 
 % use Nernst relation to find molar hydrogen flow
-h2mol = min_cells .* current ./ (2*F); % kg/s
+h2mol = min_cells .* current ./ (n*F); % kg/s
 
 % find molar flow for reactants and products (mol/s) from rxn equation
 h20mol = h2mol;         % moles of steam

@@ -3,8 +3,8 @@
 pH2 = 0.98;         % partial pressure of Hydrogen (atm)
 dt = 1;             % time step (seconds)
 A = 500;            % cell reacting area (cm^2)
-PowerSplit = 1;   % percentage of power supplied by SOFC  
-delTemp = 50;        % temperature step for iteration
+PowerSplit = 0.5;   % power split setting
+delTemps = 20;      % temperature step for iteration
 
 
 %% Mission Data
@@ -36,12 +36,13 @@ time = time_scale.*dt;
 
 %% test data
 % SOFC ops temp
-Temps = 600:delTemp:1000;
+Temps = 600:10:1000;
 n = length(Temps);
 
 % allocate solution matrices
     % Minimum Cell Number
 cellNum = zeros(1,n);
+CellParams = zeros(4,n);
     % LNG Values
 LNG_SOFC = zeros(1,n); 
 LNG_Turbine = zeros(1,n); 
@@ -86,10 +87,11 @@ for j = 1:n
     disp(j)
     [Turbine_Model, SOFC_Model, FuelReformation, SteamRecycling, ...
         HeatFlow, DuctBurnHeater, TankMass, SystemReactants] = ...
-        SOFCdriver(Temps(j), E, P, pH2, dt, A);
+        SOFCdriver(Temps(j), E, P, dt, A);
         
         % Cell Number
     cellNum(j) = SOFC_Model.Specs.CellNum;
+    % CellParams(:,j) = SOFC_Model.Specs.CellFitParams;
         % LNG Values
     LNG_SOFC(j) = FuelReformation.ReactantTotals.LNG; 
     LNG_Turbine(j) = sum(Turbine_Model.Inflow.LNG .* dt); 
@@ -258,11 +260,11 @@ hold off
 title('Air Flow Analysis')
 xlabel('Temperature (Celsius)')
 ylabel('Total Air Consumed (kg)')
-legend('Total Airflow', 'Turbine Airflow', 'SOFC Airflow', 'Duct Burn Flow', 'Minimum Air Flow')
 
 yyaxis right
 plot(Temps, BypassRatio)
 ylabel('Bypass Ratio')
+legend('Total Airflow', 'Turbine Airflow', 'SOFC Airflow', 'Duct Burn Flow', 'Minimum Air Flow', '')
 
 
 figure(5)
@@ -279,11 +281,12 @@ legend('Total Steam', 'Turbine Steam', 'SOFC Steam', 'Duct Burn Steam', 'Minimum
 figure(6)
 plot(Temps,dioxide_Total, Temps, dioxide_turbine, Temps, dioxide_FR)
 hold on
-plot(Temps, dioxide_duct, Temp_CO2, CO2_min, '*')
+plot(Temps, dioxide_duct, Temp_minCO2, CO2_min, '*')
 title('Carbon Dioxide Analysis')
 xlabel('Temperature (Celsius)')
 ylabel('Total CO_2 Output (kg)')
 legend('Total CO_2', 'Turbine CO_2', 'Fuel Reformer CO_2', 'Duct Burn CO_2', 'Minimum CO_2')
+xlim([600,1000])
 
 
 figure(7)
@@ -317,3 +320,16 @@ legend('Turbine', 'SOFC Heat', 'Fuel Reformer Heat', ...
     'Heat Required to Heat up Methane', 'Heat Required to Heat up Water', ...
     'Heat Required to Heat up Air', 'Heat from Burner', ...
     'Total System Heat', fontsize=18);
+
+
+figure(9)
+
+plot(Temps, LNG_Total, 'k-', Temp_minFuel, LNG_min, '*')
+hold on
+plot(Temps, LNG_Turbine, 'k-', Temp_minTurbine, Turbine_min, '*')
+plot(Temps, LNG_SOFC, 'k-', Temp_minSOFC, SOFC_min, '*')
+plot(Temps, LNG_Duct, 'k-', Temp_minDuct, Duct_min, '*')
+title('Total LNG Flow')
+xlabel('Temperature (Celsius)')
+ylabel('Total Methane Consumed (kg)')
+legend('Total', 'Minimum LNG', 'Turbine Flow', 'Minimum Turbine LNG', 'SOFC Flow', 'Minimum SOFC LNG', 'Duct Burner LNG', 'Minimum Burner LNG')

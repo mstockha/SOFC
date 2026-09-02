@@ -80,7 +80,7 @@ end
 L=length(x);
 f=[];
 
-for i=1:L
+for i=1:dim
     for j=1:L
         if strcmp(func_name,'F15')==0 && strcmp(func_name,'F19')==0 && strcmp(func_name,'F20')==0 && strcmp(func_name,'F21')==0 && strcmp(func_name,'F22')==0 && strcmp(func_name,'F23')==0
             f(i,j)=fobj([x(i),y(j)]);
