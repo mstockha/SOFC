@@ -10,7 +10,6 @@ function SteamEnthalpy = EnthalpyInterpolation(Temperature)
 % Inputs: temperature (Celsius)
 % Outputs: interpolated enthalpy of reaction of steam (kJ/mol)
 
-
 %% Interpolating Data from:
 % “Appendix B: Thermodynamic Data.” In Fuel Cell Fundamentals. 
 %       John Wiley & Sons, Ltd, 2016.

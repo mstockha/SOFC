@@ -59,22 +59,23 @@ Veqtn_1000 = @(params, j) params(1) - (8.314.*1273)./(params(2).*2.*96485.34) .*
 % Set parameter conditions (true for all temperatures)
 initials = [1.06 0.5 0.04 0.1 4];           % initial guesses
 upper_600 = [1.25 1 1 10 2];                 % upper bounds
+upper2 = [1.25 1 1 10 4];                 % upper bounds
 lower_600 = [1 0.2 0 0 1.001];     % lower bounds
 
 % curve fit for each dataset
-[parameters_600, residual_600] = lsqcurvefit(Veqtn_600, initials, Current_600, Voltage_600, lower_600, upper_600);
+[parameters_600, residual_600] = lsqcurvefit(Veqtn_600, initials, Current_600, Voltage_600, lower_600, upper1);
 lower_700 = [1 0.2 0 0 parameters_600(end)];     % lower bounds
-upper_700 = [parameters_600(1) 1 1 10 4];                 % upper bounds
-[parameters_700, residual_700] = lsqcurvefit(Veqtn_700, initials, Current_700, Voltage_700, lower_700, upper_700);
+upper_700 = [parameters_600(1) 1 1 10 2];                 % upper bounds
+[parameters_700, residual_700] = lsqcurvefit(Veqtn_700, initials, Current_700, Voltage_700, lower_700, upper2);
 lower_800 = [1 0.2 0 0 parameters_700(end)];     % lower bounds
-upper_800 = [parameters_700(1) 1 1 10 4];                 % upper bounds
-[parameters_800, residual_800] = lsqcurvefit(Veqtn_800, initials, Current_800, Voltage_800, lower_800, upper_800);
+upper_800 = [parameters_700(1) 1 1 10 2];                 % upper bounds
+[parameters_800, residual_800] = lsqcurvefit(Veqtn_800, initials, Current_800, Voltage_800, lower_800, upper2);
 lower_900 = [1 0.2 0.0001 0 parameters_800(end)];     % lower bounds
-upper_900 = [parameters_800(1) 1 1 10 4];                 % upper bounds
-[parameters_900, residual_900] = lsqcurvefit(Veqtn_900, initials, Current_900, Voltage_900, lower_900, upper_900);
+upper_900 = [parameters_800(1) 1 1 10 2];                 % upper bounds
+[parameters_900, residual_900] = lsqcurvefit(Veqtn_900, initials, Current_900, Voltage_900, lower_900, upper2);
 lower_1000 = [1 0.2 0.0001 0 parameters_900(end)];     % lower bounds
-upper_1000 = [parameters_900(1) 1 1 10 4];   
-[parameters_1000, residual_1000] = lsqcurvefit(Veqtn_1000, initials, Current_1000, Voltage_1000, lower_1000, upper_1000);
+upper_1000 = [parameters_900(1) 1 1 10 2];   
+[parameters_1000, residual_1000] = lsqcurvefit(Veqtn_1000, initials, Current_1000, Voltage_1000, lower_1000, upper2);
 
 
 % Voltage calculation based on parameters
@@ -182,31 +183,31 @@ title('Model Validation: Residual vs Predicted')
 subplot(1,5,1)
 plot(V600, resid600, '.')
 xlabel('Predicted Voltage (V)')
-ylabel('Residual  (V)')
+ylabel('Residual |V*_i - V_i|  (V)')
 title('Temperature: 600 C')
 
 subplot(1,5,2)
 plot(V700, resid700, '.')
 xlabel('Predicted Voltage (V)')
-ylabel('Residual (V)')
+ylabel('Residual |V*_i - V_i|  (V)')
 title('Temperature: 700 C')
 
 subplot(1,5,3)
 plot(V800, resid800, '.')
 xlabel('Predicted Voltage (V)')
-ylabel('Residual (V)')
+ylabel('Residual |V*_i - V_i|  (V)')
 title('Temperature: 800 C')
 
 subplot(1,5,4)
 plot(V900, resid900, '.')
 xlabel('Predicted Voltage (V)')
-ylabel('Residual (V)')
+ylabel('Residual |V*_i - V_i|  (V)')
 title('Temperature: 900 C')
 
 subplot(1,5,5)
 plot(V1000, resid1000, '.')
 xlabel('Predicted Voltage (V)')
-ylabel('Residual (V)')
+ylabel('Residual |V*_i - V_i|  (V)')
 title('Temperature: 1000 C')
 
 

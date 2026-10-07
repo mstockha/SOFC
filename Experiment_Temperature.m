@@ -36,13 +36,14 @@ time = time_scale.*dt;
 
 %% test data
 % SOFC ops temp
-Temps = 600:10:1000;
+Temps = 600:delTemps:1000;
 n = length(Temps);
 
 % allocate solution matrices
     % Minimum Cell Number
 cellNum = zeros(1,n);
-CellParams = zeros(4,n);
+CellParams = zeros(5,n);
+cellCurrent = zeros(8640, n);
     % LNG Values
 LNG_SOFC = zeros(1,n); 
 LNG_Turbine = zeros(1,n); 
@@ -91,7 +92,8 @@ for j = 1:n
         
         % Cell Number
     cellNum(j) = SOFC_Model.Specs.CellNum;
-    % CellParams(:,j) = SOFC_Model.Specs.CellFitParams;
+    CellParams(:,j) = SOFC_Model.Specs.CellFitParams;
+    cellCurrent(:,j) = SOFC_Model.Performance.Current;
         % LNG Values
     LNG_SOFC(j) = FuelReformation.ReactantTotals.LNG; 
     LNG_Turbine(j) = sum(Turbine_Model.Inflow.LNG .* dt); 
@@ -153,12 +155,12 @@ end
 
 
 %% plotting results
-figure(1)
+figure(1)   % Reactant consumption trends
 subplot(4,1,1)
 plot(Temps, cellNum)
 title('Reactant Consumption Trends')
 xlabel('Temperature (Celsius)')
-ylabel('Installed SOFC Cells Required (units)')
+ylabel('Installed SOFC Cells Required')
 hold on
 plot(Temp_minCells, Cells_min, '*')
 hold off
@@ -186,7 +188,7 @@ plot(Temp_minAir, Air_min, '*')
 hold off
 
 
-figure(2)
+figure(2)       % Product Rejection Trends
 subplot(4,1,1)
 plot(Temps, steam_Total)
 title('Exhaust Rejection Trends')
@@ -221,7 +223,7 @@ plot(Temp_minHeat, RejectedHeat_min, '*')
 hold off
 
 
-figure(3)
+figure(3)       % LNG Usage Trends
 subplot(4,1,1)
 plot(Temps, LNG_Total, 'k-', Temp_minFuel, LNG_min, '*')
 title('Total LNG Flow')
@@ -251,7 +253,7 @@ ylabel('Total Methane Consumed (kg)')
 legend('', 'Minimum Duct LNG')
 
 
-figure(4)
+figure(4)       % Air usage trends
 yyaxis left
 plot(Temps, air_Total, Temps, air_turbine, Temps, air_SOFC)
 hold on
@@ -267,7 +269,7 @@ ylabel('Bypass Ratio')
 legend('Total Airflow', 'Turbine Airflow', 'SOFC Airflow', 'Duct Burn Flow', 'Minimum Air Flow', '')
 
 
-figure(5)
+figure(5)       % Steam exhaust
 plot(Temps, steam_Total, Temps, steam_turbine, Temps, steam_SOFC)
 hold on
 plot(Temps, steam_duct, Temp_minSteam, Steam_min, '*')
@@ -278,10 +280,11 @@ ylabel('Total Steam Output (kg)')
 legend('Total Steam', 'Turbine Steam', 'SOFC Steam', 'Duct Burn Steam', 'Minimum Steam')
 
 
-figure(6)
+figure(6)       % carbon dioxide output
 plot(Temps,dioxide_Total, Temps, dioxide_turbine, Temps, dioxide_FR)
 hold on
 plot(Temps, dioxide_duct, Temp_minCO2, CO2_min, '*')
+hold off
 title('Carbon Dioxide Analysis')
 xlabel('Temperature (Celsius)')
 ylabel('Total CO_2 Output (kg)')
@@ -289,7 +292,7 @@ legend('Total CO_2', 'Turbine CO_2', 'Fuel Reformer CO_2', 'Duct Burn CO_2', 'Mi
 xlim([600,1000])
 
 
-figure(7)
+figure(7)       % heat flow
 plot(Temps, heat_turbine, Linewidth = 2)
 hold on
 plot(Temps, heat_SOFC, Temps, heat_duct)
@@ -302,7 +305,7 @@ ylabel('Total Heat Consumed (kJ')
 legend('Turbine', 'SOFC', 'Duct Burner', 'Fuel Reformer', ...
     'LNG Heating', 'Air Heating', 'H_2O Heating', 'Net Heat Rejected')
 
-figure(8);
+figure(8);      % Heat Fow
 plot(time, Turbine_Model.Outflow.Heat, LineWidth=3);
 hold on
 plot(time, SOFC_Model.Performance.HeatFlow, LineWidth=2);
@@ -322,8 +325,7 @@ legend('Turbine', 'SOFC Heat', 'Fuel Reformer Heat', ...
     'Total System Heat', fontsize=18);
 
 
-figure(9)
-
+figure(9)       % LNG usage - single axis
 plot(Temps, LNG_Total, 'k-', Temp_minFuel, LNG_min, '*')
 hold on
 plot(Temps, LNG_Turbine, 'k-', Temp_minTurbine, Turbine_min, '*')
@@ -333,3 +335,16 @@ title('Total LNG Flow')
 xlabel('Temperature (Celsius)')
 ylabel('Total Methane Consumed (kg)')
 legend('Total', 'Minimum LNG', 'Turbine Flow', 'Minimum Turbine LNG', 'SOFC Flow', 'Minimum SOFC LNG', 'Duct Burner LNG', 'Minimum Burner LNG')
+
+figure(10)
+plot(time, cellCurrent(:,1), '--', 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
+hold on
+for x = 2:(n-1)
+    plot(time, cellCurrent(:,x), 'DisplayName', sprintf('%i C', Temps(x)))
+end
+plot(time, cellCurrent(:,n), '.-', 'DisplayName', sprintf('%i C', Temps(n)), LineWidth=1.5)
+hold off
+legend('show')
+title('Current Density Analysis with Temperature')
+xlabel('Time (s)')
+ylabel('Current Draw (A/cm^2)')

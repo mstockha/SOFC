@@ -21,6 +21,8 @@ end
 
 % interpolate current and voltage draw based on calculated relations and
 % experimental power requirements
+% interpolate current and voltage draw based on calculated relations and
+% experimental power requirements
 currentdraw = spline(power,i_cut,pdens);    % current density (A/cm2)
 
 for count = 1:length(currentdraw)
@@ -30,7 +32,6 @@ for count = 1:length(currentdraw)
 end
 
 voltagedraw = spline(i,V,currentdraw);      % per-cell voltage draw (V)
-
 
 % determine total current and power
 current = currentdraw .* A ;              % total current (amps)
@@ -50,7 +51,7 @@ O2mol = h2mol./2;       % moles of oxygen
 % convert to mass flow rates (kg/s)
 H2dot = 0.002016 .* h2mol;          % hydrogen flow
 vapordot = h20mol .* 0.01802;       % steam flow
-airdot = O2mol .* 0.02896;          % oxygen flow
+airdot = O2mol .* 0.02896 ./ 0.21;          % oxygen flow
 
 % determine total flow (kg)
 total_H2 = sum(H2dot.*dt);          % total hydrogen
@@ -64,6 +65,8 @@ total_air = sum(airdot.*dt);        % total air
 RxnEnthalpy_Steam = EnthalpyInterpolation(T);
 
 % net reaction enthalpy calculation
+    % This is a sum because the heat is heat absorbed - so the released
+    % electric power is negative (and Q - (-P) = Q + P).
 heatdot = h2mol.*RxnEnthalpy_Steam + P_elec;  % heat flow rate (kJ/s)
 total_heat = sum(heatdot.*dt);      % integrate for total heat (kJ)
 
