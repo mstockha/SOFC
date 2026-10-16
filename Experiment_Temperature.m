@@ -3,7 +3,7 @@
 pH2 = 0.98;         % partial pressure of Hydrogen (atm)
 dt = 1;             % time step (seconds)
 A = 500;            % cell reacting area (cm^2)
-PowerSplit = 0.5;   % power split setting
+PowerSplit = 0.8;   % power split setting
 delTemps = 20;      % temperature step for iteration
 
 
