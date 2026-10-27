@@ -1,9 +1,10 @@
-%% User Inputs
-clc; clear 
+clc; clear
+
+%% User Inputs 
 dt = 1;             % time step (seconds)
 A = 500;            % cell reacting area (cm^2)
-delTemp = 50;        % temperature step for iteration
-
+delTemp = 50;       % temperature step for iteration
+delSplit = 0.01;    % power split step for iteration
 
 %% Mission Data
 
@@ -22,7 +23,7 @@ time = time_scale.*dt;
 %% test data - % rows = temperatures, columns = power splits
 % SOFC ops temp
 Temps = 600:delTemp:1000;   n = length(Temps);
-Splits = 0:0.1:1;          m = length(Splits);
+Splits = 0:delSplit:1;          m = length(Splits);
 
 % allocate solution matrices
     % Minimum Cell Number
@@ -207,6 +208,64 @@ legend('show')
 title('Installed Cell Number for Power Split AND Temperature')
 xlabel('Power Split (% Power from SOFC)')
 ylabel('Cell Number')
+
+
+figure(6)
+subplot(2,2,1)
+plot(Splits, LNG_Total(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
+hold on
+for i = 2:length(Temps)
+    plot(Splits, LNG_Total(i,:), 'DisplayName', sprintf('%i C', Temps(i)), LineWidth=1.5)
+end
+hold off
+legend('show')
+title('Total LNG Usage for Power Split AND Temperature')
+xlabel('Power Split (% Power from SOFC)')
+ylabel('LNG Usage (kg)')
+
+subplot(2,2,2)
+plot(Splits, LNG_SOFC(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
+%plot(Splits, LNG_SOFC(1,:), Splits, LNG_Turbine(1,:), Splits, LNG_Duct(1,:))
+hold on
+for i = 2:length(Temps)
+    plot(Splits, LNG_SOFC(i,:), 'DisplayName', sprintf('%i C', Temps(i)), LineWidth=1.5)
+    %plot(Splits, LNG_SOFC(i,:), Splits, LNG_Turbine(i,:), Splits, LNG_Duct(i,:))
+end
+hold off
+ylim([150, 3200])
+legend('show')
+title('SOFC LNG Usage for Power Split AND Temperature')
+xlabel('Power Split (% Power from SOFC)')
+ylabel('LNG Usage (kg)')
+
+subplot(2,2,3)
+plot(Splits, LNG_Turbine(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
+%plot(Splits, LNG_SOFC(1,:), Splits, LNG_Turbine(1,:), Splits, LNG_Duct(1,:))
+hold on
+for i = 2:length(Temps)
+    plot(Splits, LNG_Turbine(i,:), 'DisplayName', sprintf('%i C', Temps(i)), LineWidth=1.5)
+    %plot(Splits, LNG_SOFC(i,:), Splits, LNG_Turbine(i,:), Splits, LNG_Duct(i,:))
+end
+hold off
+legend('show')
+title('Turbine LNG Usage for Power Split AND Temperature')
+xlabel('Power Split (% Power from SOFC)')
+ylabel('LNG Usage (kg)')
+
+subplot(2,2,4)
+plot(Splits, LNG_Duct(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
+%plot(Splits, LNG_SOFC(1,:), Splits, LNG_Turbine(1,:), Splits, LNG_Duct(1,:))
+hold on
+for i = 2:length(Temps)
+    plot(Splits, LNG_Duct(i,:), 'DisplayName', sprintf('%i C', Temps(i)), LineWidth=1.5)
+    %plot(Splits, LNG_SOFC(i,:), Splits, LNG_Turbine(i,:), Splits, LNG_Duct(i,:))
+end
+hold off
+legend('show')
+title('Duct LNG Usage for Power Split AND Temperature')
+xlabel('Power Split (% Power from SOFC)')
+ylabel('LNG Usage (kg)')
+
 
 % %% Analyze Results
 
