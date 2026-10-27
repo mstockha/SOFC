@@ -16,7 +16,7 @@ Turbine_Model.Outflow.Heat = turbine_heat;
 %% SOFC Cell Sizing
 
 % Note: outputs two figure (101, 102) to verify the i-V and i-P curves
-[cells, CellParams, i, V, power] = SOFCsize(E,T,A);
+[cells, CellParams, i, V, power] = SOFCsize2(E,T,A);
 %[cells, i, V, power] = SOFCsize_Original(E,T,A);
 % Struct for specifications: geometry and theoretical cell performance
 SOFC_Model.Specs.Area = A;

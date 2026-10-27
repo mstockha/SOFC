@@ -11,7 +11,7 @@ clc; clear;
 
 %% Plot Data
 
-load("VoltageFittingData2.mat");     % load experimental dataset
+load("VoltageFittingDataAscend.mat");     % load experimental dataset
 
 figure(1)       % experimental voltage curves
 yyaxis left
@@ -43,7 +43,7 @@ ylim([0,1.2])
 % Model: Voltage Equation for each temperature
     % j = current density (known input)
     % params = [V0, a, Ri, j0, jL]
-    % V0 = thermonuetral/Nernst voltage
+    % V0 = thermonuetral/Nernst voltage params(1)
     % a = charge transfer coefficient 
     % Ri = Area specific resistance
     % j0 = exchange current density
@@ -106,8 +106,6 @@ CellParams700 = VoltageFit(temps(2), V0, a, Ri, j0, jL, temps);
 CellParams800 = VoltageFit(temps(3), V0, a, Ri, j0, jL, temps);
 CellParams900 = VoltageFit(temps(4), V0, a, Ri, j0, jL, temps);
 CellParams1000 = VoltageFit(temps(5), V0, a, Ri, j0, jL, temps);
-
-
 
 
 %% Training Data Model
