@@ -64,7 +64,7 @@ Veqtn_1000 = @(params, j) params(1) - (8.314.*1273)./(params(2).*2.*96485.34) .*
 % Set parameter conditions (true for all temperatures)
 initials = [1.06 0.5 0.04 0.1 4];           % initial guesses
 upper_600 = [1.25 1 1 10 1.4];                 % upper bounds
-lower_600 = [1 0.2 0 0 1.001];     % lower bounds
+lower_600 = [0.9 0.2 0 0 1.001];     % lower bounds
 
 % curve fit for each dataset
 [parameters_600v, residual_600v] = lsqcurvefit(Veqtn_600, initials, ExpCurrent600v_Train, ExpVoltage600v_Train, lower_600, upper_600);
