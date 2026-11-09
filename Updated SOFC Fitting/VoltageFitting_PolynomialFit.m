@@ -64,20 +64,20 @@ Veqtn_1000 = @(params, j) params(1) - (8.314.*1273)./(params(2).*2.*96485.34) .*
 % Set parameter conditions (true for all temperatures)
 initials = [1.06 0.5 0.04 0.1 4];           % initial guesses
 upper_600 = [1.25 1 1 10 1.4];                 % upper bounds
-lower_600 = [1 0.2 0 0 1.001];     % lower bounds
+lower_600 = [0.9 0.2 0 0 1.001];     % lower bounds
 
 % curve fit for each dataset
 [parameters_600v, residual_600v] = lsqcurvefit(Veqtn_600, initials, ExpCurrent600v_Train, ExpVoltage600v_Train, lower_600, upper_600);
-lower_700 = [1 0.2 0 0 parameters_600v(end)];     % lower bounds
+lower_700 = [0.9 0.2 0 0 parameters_600v(end)];     % lower bounds
 upper_700 = [parameters_600v(1) 1 1 10 4];                 % upper bounds
 [parameters_700v, residual_700v] = lsqcurvefit(Veqtn_700, initials, ExpCurrent700v_Train, ExpVoltage700v_Train, lower_700, upper_700);
-lower_800 = [1 0.2 0 0 parameters_700v(end)];     % lower bounds
+lower_800 = [0.9 0.2 0 0 parameters_700v(end)];     % lower bounds
 upper_800 = [parameters_700v(1) 1 1 10 4];                 % upper bounds
 [parameters_800v, residual_800v] = lsqcurvefit(Veqtn_800, initials, ExpCurrent800v_Train, ExpVoltage800v_Train, lower_800, upper_800);
-lower_900 = [1 0.2 0.0001 0 parameters_800v(end)];     % lower bounds
+lower_900 = [0.9 0.2 0.0001 0 parameters_800v(end)];     % lower bounds
 upper_900 = [parameters_800v(1) 1 1 10 4];                 % upper bounds
 [parameters_900v, residual_900v] = lsqcurvefit(Veqtn_900, initials, ExpCurrent900v_Train, ExpVoltage900v_Train, lower_900, upper_900);
-lower_1000 = [1 0.2 0.0001 0 parameters_900v(end)];     % lower bounds
+lower_1000 = [0.9 0.2 0.0001 0 parameters_900v(end)];     % lower bounds
 upper_1000 = [parameters_900v(1) 1 1 10 4];   
 [parameters_1000v, residual_1000v] = lsqcurvefit(Veqtn_1000, initials, ExpCurrent1000v_Train, ExpVoltage1000v_Train, lower_1000, upper_1000);
 
