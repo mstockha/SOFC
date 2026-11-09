@@ -6,7 +6,7 @@
 % This file evaluates the ascending curve sizing for each temperature, to 
 % compare to the averaged data sets
 
-clc; clear;
+%clc; clear;
 
 %% Data Collection
 [Cells600, i600, V600, P600] = PolarizationCurve(600);
@@ -64,9 +64,9 @@ function [CellParams, i, V, power] = PolarizationCurve(T)
 % local function for cell voltage equation
 % local function for cell voltage equation
 Veqtn = @(params,j) params(1) ...
-    - (8.314.*params(6))./(params(2).*2.*96485.34) .* log(j./params(4)) ...
-    - j.*params(3) - (8.314.*params(6))./(2.*96485.34) .* (1 + 1/params(2)) ...
-    .* log(params(5)./(params(5) - j));
+    - ((8.314.*params(6))./(params(2).*2.*96485.34) .* log(j./params(4)) ...
+    + j.*params(3) + (8.314.*params(6))./(2.*96485.34) .* (1 + 1/params(2)) ...
+    .* log(params(5)./(params(5) - j)));
 % params = [V0, a, Ri, j0, jL, T (Kelvin)]
 
 % params = [V0, a, Ri, j0, jL, T (Kelvin)]
@@ -83,10 +83,22 @@ Veqtn = @(params,j) params(1) ...
 
 % cell voltage equation (cve) best fit coefficients
 temps = [873 973 1073 1173 1273];           % temperature [celsius]
-V0_set = [1.02756183616924	0.965833408425338	0.964258884813814	0.939305184875729	0.924423695453649];
-Ri_set = [0.641530799341247 0.388420612425614 0.261137090440196 0.209672826238255 0.168875502408782];
-j0_set = [0.0789021319358237 0.380617272326173 0.509871515813084 0.945706271560702 1.17705190520681]; 
-jL_set = [1.00100000000002 1.02068700810361 1.31203885315528 1.54100002710257 1.66640934704912];
+
+% V0_set = [1.0276	1.0145	1.0075	1.005	0.924423695453649];
+% Ri_set = [0.641530799341247 0.388420612425614 0.261137090440196 0.209672826238255 0.168875502408782];
+% j0_set = [0.0789021319358237 0.380617272326173 0.509871515813084 0.945706271560702 1.17705190520681]; 
+% jL_set = [1.00100000000002 1.02068700810361 1.31203885315528 1.54100002710257 1.66640934704912];
+% 
+% V0_set = [1.0241 0.96451 0.93557 0.92268 0.9135];
+% Ri_set = [0.56458 0.38842 0.26114 0.20966 0.16887];
+% j0_set = [0.069061 0.39284 0.9483 1.3138 1.4364]; 
+% jL_set = [0.7487 1.0207 1.312 1.5409 1.6664];
+
+V0_set = [1.0241 1.0394 1.0671 1.06 1.0728];
+Ri_set = [0.56458 0.38842 0.26114 0.20967 0.16888];
+j0_set = [0.069061 0.065867 0.055155 0.086833 0.07873]; 
+jL_set = [0.7487 1.0207 1.312 1.541 1.6664];
+
 
 % linear fit for best fit parameters: cve coefficents fit as Var = f(T)
 T = T + 273;
