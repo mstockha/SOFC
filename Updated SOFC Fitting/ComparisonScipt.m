@@ -65,7 +65,8 @@ function [CellParams, i, V, power] = PolarizationCurve(T)
 Veqtn = @(params,j) params(1) ...
     - (8.314.*params(6))./(params(2).*2.*96485.34) .* log(j./params(4)) ...
     - j.*params(3) - (8.314.*params(6))./(2.*96485.34) .* (1 + 1/params(2)) ...
-    .* log(params(5)./(params(5) - j)); 
+    .* log(params(5)./(params(5) - j));
+% params = [V0, a, Ri, j0, jL, T (Kelvin)]
 
 % params = [V0, a, Ri, j0, jL, T (Kelvin)]
 
