@@ -6,7 +6,7 @@
 % This file evaluates the ascending curve sizing for each temperature, to 
 % compare to the averaged data sets
 
-%clc; clear;
+clc; clear;
 
 %% Data Collection
 [Cells600, i600, V600, P600] = PolarizationCurve(600);
@@ -64,7 +64,7 @@ function [CellParams, i, V, power] = PolarizationCurve(T)
 % local function for cell voltage equation
 % local function for cell voltage equation
 Veqtn = @(params,j) params(1) ...
-    - ((8.314.*params(6))./(params(2).*2.*96485.34) .* log(j./params(4)) ...
+    - ((8.314.*params(6))./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) ...
     + j.*params(3) + (8.314.*params(6))./(2.*96485.34) .* (1 + 1/params(2)) ...
     .* log(params(5)./(params(5) - j)));
 % params = [V0, a, Ri, j0, jL, T (Kelvin)]
@@ -106,7 +106,7 @@ T = T + 273;
 params_V0 = polyfit(temps, V0_set, 3);   V0 = polyval(params_V0, T);
 params_Ri = polyfit(temps, Ri_set, 3);   Ri = polyval(params_Ri, T);
 params_j0 = polyfit(temps, j0_set, 3);   j0 = polyval(params_j0, T);
-params_jL = polyfit(temps, jL_set, 3);   jL = polyval(params_jL, T);
+params_jL = polyfit(temps, jL_set, 2);   jL = polyval(params_jL, T);
 a = 1;        % da/dT = 0 per curve fitting
 
 CellParams = [V0, a, Ri, j0, jL];

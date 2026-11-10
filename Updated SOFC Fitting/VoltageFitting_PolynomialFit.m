@@ -55,18 +55,18 @@ ylim([0,1.2])
     % j0 = exchange current density
     % jL = limiting current density
     
-Veqtn_600 = @(params, j) params(1) - ((8.314.*873)./(params(2).*2.*96485.34) .* log(j./params(4)) + j.*params(3) + (8.314.*873)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
-Veqtn_700 = @(params, j) params(1) - ((8.314.*973)./(params(2).*2.*96485.34) .* log(j./params(4)) + j.*params(3) + (8.314.*973)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
-Veqtn_800 = @(params, j) params(1) - ((8.314.*1073)./(params(2).*2.*96485.34) .* log(j./params(4)) + j.*params(3) + (8.314.*1073)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
-Veqtn_900 = @(params, j) params(1) - ((8.314.*1173)./(params(2).*2.*96485.34) .* log(j./params(4)) + j.*params(3) + (8.314.*1173)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
-Veqtn_1000 = @(params, j) params(1) - ((8.314.*1273)./(params(2).*2.*96485.34) .* log(j./params(4)) + j.*params(3) + (8.314.*1273)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
+Veqtn_600 = @(params, j) params(1) - ((8.314.*873)./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) + j.*params(3) + (8.314.*873)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
+Veqtn_700 = @(params, j) params(1) - ((8.314.*973)./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) + j.*params(3) + (8.314.*973)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
+Veqtn_800 = @(params, j) params(1) - ((8.314.*1073)./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) + j.*params(3) + (8.314.*1073)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
+Veqtn_900 = @(params, j) params(1) - ((8.314.*1173)./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) + j.*params(3) + (8.314.*1173)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
+Veqtn_1000 = @(params, j) params(1) - ((8.314.*1273)./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) + j.*params(3) + (8.314.*1273)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
 
 % Set parameter conditions (true for all temperatures)
 initials = [1.06 0.5 0.04 0.1 4];           % initial guesses
 upper_600 = [1.25 1 1 10 1.4];                 % upper bounds
 lower_600 = [0.9 0.2 0 0 max(Current_600)+0.1];     % lower bounds
 
-% curve fit for each dataset
+% % curve fit for each dataset
 % [parameters_600v, residual_600v] = lsqcurvefit(Veqtn_600, initials, ExpCurrent600v_Train, ExpVoltage600v_Train, lower_600, upper_600);
 % lower_700 = [0.9 0.2 0 0 max(Current_700)+0.001];     % lower bounds
 % upper_700 = [parameters_600v(1) 1 1 10 4];                 % upper bounds
@@ -114,7 +114,7 @@ disp(Outputs)
 %% Build Model
 % local function for cell voltage equation
 Veqtn = @(params,j) params(1) ...
-    - ((8.314.*params(6))./(params(2).*2.*96485.34) .* log(j./params(4)) ...
+    - ((8.314.*params(6))./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) ...
     + j.*params(3) + (8.314.*params(6))./(2.*96485.34) .* (1 + 1/params(2)) ...
     .* log(params(5)./(params(5) - j)));
 % params = [V0, a, Ri, j0, jL, T (Kelvin)]
@@ -125,7 +125,7 @@ temps = Temperature + 273;
 paramsV0 = polyfit(temps, V0, 3); 
 paramsRi = polyfit(temps, Ri, 3);   
 paramsj0 = polyfit(temps, j0, 3);   
-paramsjL = polyfit(temps, jL, 3);   
+paramsjL = polyfit(temps, jL, 2);   
 a = 1; % polyfit(temps, a, 3);        % da/dT = 0 per curve fitting
 % params = [V0, a, Ri, j0, jL, T (Kelvin)]
 

@@ -1,7 +1,7 @@
 function [min_cells, CellParams, i, V, power] = SOFCsize2(E,T,A)
 % local function for cell voltage equation
 Veqtn = @(params,j) params(1) ...
-    - (8.314.*params(6))./(params(2).*2.*96485.34) .* log(j./params(4)) ...
+    - (8.314.*params(6))./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) ...
     - j.*params(3) - (8.314.*params(6))./(2.*96485.34) .* (1 + 1/params(2)) ...
     .* log(params(5)./(params(5) - j));
 % params = [V0, a, Ri, j0, jL, T (Kelvin)]
@@ -18,18 +18,17 @@ Veqtn = @(params,j) params(1) ...
 
 % cell voltage equation (cve) best fit coefficients
 temps = [873 973 1073 1173 1273];           % temperature [celsius]
-V0_set = [1.03725415711440	1.01891468320676	1.00971564455194	1.00643505567497	1.00330411372350];
-Ri_set = [0.641530762954321	0.388420407624452	0.261136514819686	0.209672814526219	0.168876245427943];
-j0_set = [0.0609784150044978	0.107294037941175	0.190731967158638	0.250541484550616	0.279377504120229]; 
-jL_set = [1.00100000000002	1.02068598022039	1.31203645375411	1.54100201480319	1.66641288039077];
-
+V0_set = [1.0241 1.0394 1.0671 1.06 1.0728];
+Ri_set = [0.56458 0.38842 0.26114 0.20967 0.16888];
+j0_set = [0.069061 0.065867 0.055155 0.086833 0.07873]; 
+jL_set = [0.7487 1.0207 1.312 1.541 1.6664];
 % linear fit for best fit parameters: cve coefficents fit as Var = f(T)
 T = T + 273;
 
 params_V0 = polyfit(temps, V0_set, 3);   V0 = polyval(params_V0, T);
 params_Ri = polyfit(temps, Ri_set, 3);   Ri = polyval(params_Ri, T);
 params_j0 = polyfit(temps, j0_set, 3);   j0 = polyval(params_j0, T);
-params_jL = polyfit(temps, jL_set, 3);   jL = polyval(params_jL, T);
+params_jL = polyfit(temps, jL_set, 2);   jL = polyval(params_jL, T);
 a = 1;        % da/dT = 0 per curve fitting
 
 CellParams = [V0, a, Ri, j0, jL];

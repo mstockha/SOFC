@@ -7,7 +7,7 @@ SOFCdelay = zeros(1,SOFCtimedelay);
 Recycledelay = zeros(1,FRtimedelay);
 
 % any steam still in the system at landing will be flushed
-RecycleExhaust = SOFC(end-SOFCdelay:end) + FRrelease(end-Recycledelay:end);
+RecycleExhaust = sum(SOFC((end-SOFCtimedelay):end)) + sum(FRrelease((end-FRtimedelay):end));
 
 % remove exhaust segments from SOFC and FR released vaport vectors
 SOFC = [SOFCdelay SOFC(1:end-SOFCtimedelay)];

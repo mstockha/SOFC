@@ -19,6 +19,8 @@ for d = 1:length(power)
     end
 end
 
+power = power(~isnan(power)); i_cut = i_cut(~isnan(i_cut));
+
 % interpolate current and voltage draw based on calculated relations and
 % experimental power requirements
 % interpolate current and voltage draw based on calculated relations and
