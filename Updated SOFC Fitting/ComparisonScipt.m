@@ -15,6 +15,10 @@ clc; clear;
 [Cells900, i900, V900, P900] = PolarizationCurve(900);
 [Cells1000, i1000, V1000, P1000] = PolarizationCurve(1000);
 
+[Cells650, i650, V650, P650] = PolarizationCurve(650);
+[Cells750, i750, V750, P750] = PolarizationCurve(750);
+[Cells850, i850, V850, P850] = PolarizationCurve(850);
+
 
 %% Data Analysis
 % 600 C
@@ -43,7 +47,21 @@ Vavg1000 = mean(V1000); Pavg1000 = mean(P1000);
 Vstd1000 = std(V1000); Pstd1000 = std(P1000);
 
 
+imax650 = max(i650); Vmax650 = max(V650); Pmax650 = max(P650);
+Vavg650 = mean(V650); Pavg650 = mean(P650);
+Vstd650 = std(V650); Pstd650 = std(P650);
+
+imax750 = max(i750); Vmax750 = max(V750); Pmax750 = max(P750);
+Vavg750 = mean(V750); Pavg750 = mean(P750);
+Vstd750 = std(V750); Pstd750 = std(P750);
+
+imax850 = max(i850); Vmax850 = max(V850); Pmax850 = max(P850);
+Vavg850 = mean(V850); Pavg850 = mean(P850);
+Vstd850 = std(V850); Pstd850 = std(P850);
+
+
 %% Build Table
+% Fitting Temperatures
 Temperature = [600; 700; 800; 900; 1000];
 MaxVolts = [Vmax600; Vmax700; Vmax800; Vmax900; Vmax1000];
 AvgVolts = [Vavg600; Vavg700; Vavg800; Vavg900; Vavg1000];
@@ -58,6 +76,20 @@ Outputs = table(Temperature, MaxVolts, AvgVolts, SDVolts, MaxP, AvgP, SDP, MaxI)
 fprintf('\n\tStatistical Analysis of Ascending fit to numerical model average\n')
 disp(Outputs)
 
+% Intermediary Temperatures
+Temperature = [650; 750; 850];
+MaxVolts = [Vmax650; Vmax750; Vmax850];
+AvgVolts = [Vavg650; Vavg750; Vavg850];
+SDVolts = [Vstd650; Vstd750; Vstd850];
+MaxP = [Pmax650; Pmax750; Pmax850];
+AvgP = [Pavg650; Pavg750; Pavg850];
+SDP = [Pstd650; Pstd750; Pstd850];
+MaxI = [imax650; imax750; imax850];
+
+Outputs = table(Temperature, MaxVolts, AvgVolts, SDVolts, MaxP, AvgP, SDP, MaxI);
+    % display table
+fprintf('\n\tStatistical Analysis of Ascending fit to numerical model average\n')
+disp(Outputs)
 
 %% Local Function for Cell Polarization & Power Curves
 function [CellParams, i, V, power] = PolarizationCurve(T)
@@ -94,10 +126,10 @@ temps = [873 973 1073 1173 1273];           % temperature [celsius]
 % j0_set = [0.069061 0.39284 0.9483 1.3138 1.4364]; 
 % jL_set = [0.7487 1.0207 1.312 1.5409 1.6664];
 
-V0_set = [1.0241 1.0394 1.0671 1.06 1.0728];
-Ri_set = [0.56458 0.38842 0.26114 0.20967 0.16888];
-j0_set = [0.069061 0.065867 0.055155 0.086833 0.07873]; 
-jL_set = [0.7487 1.0207 1.312 1.541 1.6664];
+V0_set = [1.0241 1.0418 1.0697 1.0609 1.0742];
+Ri_set = [0.57569 0.39476 0.26468 0.21215 0.17121];
+j0_set = [0.077183 0.067096 0.055216 0.089159 0.080058]; 
+jL_set = [0.075934 1.03 1.3181 1.5461 1.6712];
 
 
 % linear fit for best fit parameters: cve coefficents fit as Var = f(T)

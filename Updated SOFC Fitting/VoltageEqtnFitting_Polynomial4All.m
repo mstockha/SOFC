@@ -3,15 +3,7 @@
 % Date Written: 6 Nov 2026
 % 
 % % % Description: % % % 
-% This file includes data digitized for the SOFC to fit the cell voltage 
-% equation coefficients. All current datapoints are in units of Amps per 
-% sq. centimeter, all voltage differences are in volts, and all power 
-% datapoints are in Watts per sq. cm. This file does not split the data
-% into training and validation sets, and uses a polynomial fit to fit the
-% parameters for intermediary temepratures. For these reasons this file is
-% not in use. It is provided for comparison, because this was my best
-% original fit, and there was originally an argument for relaxed modelling
-% practices (I just didn't really approve of it).
+% Polynomial fit including data for all of the fuel cells.
 
 clc; clear;
 
@@ -141,14 +133,14 @@ legend('1000C', Location='southeast')
     % j0 = exchange current density
     % jL = limiting current density
     
-Veqtn_600 = @(params, j) params(1) - (8.314.*873)./(params(2).*2.*96485.34) .* log(j./params(4)) - j.*params(3) - (8.314.*873)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j));
-Veqtn_650 = @(params, j) params(1) - (8.314.*923)./(params(2).*2.*96485.34) .* log(j./params(4)) - j.*params(3) - (8.314.*823)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j));
-Veqtn_700 = @(params, j) params(1) - (8.314.*973)./(params(2).*2.*96485.34) .* log(j./params(4)) - j.*params(3) - (8.314.*973)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j));
-Veqtn_750 = @(params, j) params(1) - (8.314.*1023)./(params(2).*2.*96485.34) .* log(j./params(4)) - j.*params(3) - (8.314.*1023)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j));
-Veqtn_800 = @(params, j) params(1) - (8.314.*1073)./(params(2).*2.*96485.34) .* log(j./params(4)) - j.*params(3) - (8.314.*1073)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j));
-Veqtn_850 = @(params, j) params(1) - (8.314.*1123)./(params(2).*2.*96485.34) .* log(j./params(4)) - j.*params(3) - (8.314.*1123)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j));
-Veqtn_900 = @(params, j) params(1) - (8.314.*1173)./(params(2).*2.*96485.34) .* log(j./params(4)) - j.*params(3) - (8.314.*1173)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j));
-Veqtn_1000 = @(params, j) params(1) - (8.314.*1273)./(params(2).*2.*96485.34) .* log(j./params(4)) - j.*params(3) - (8.314.*1273)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j));
+Veqtn_600 = @(params, j) params(1) - ((8.314.*873)./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) + j.*params(3) + (8.314.*873)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
+Veqtn_650 = @(params, j) params(1) - ((8.314.*923)./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) + j.*params(3) + (8.314.*823)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
+Veqtn_700 = @(params, j) params(1) - ((8.314.*973)./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) + j.*params(3) + (8.314.*973)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
+Veqtn_750 = @(params, j) params(1) - ((8.314.*1023)./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) + j.*params(3) + (8.314.*1023)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
+Veqtn_800 = @(params, j) params(1) - ((8.314.*1073)./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) + j.*params(3) + (8.314.*1073)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
+Veqtn_850 = @(params, j) params(1) - ((8.314.*1123)./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) + j.*params(3) + (8.314.*1123)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
+Veqtn_900 = @(params, j) params(1) - ((8.314.*1173)./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) + j.*params(3) + (8.314.*1173)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
+Veqtn_1000 = @(params, j) params(1) - ((8.314.*1273)./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) + j.*params(3) + (8.314.*1273)./(2.*96485.34) .* (1 + 1/params(2)) .* log(params(5)./(params(5) - j)));
 
 % Set parameter conditions (true for all temperatures)
 initials = [1.06 0.5 0.04 0.1 5.5];           % initial guesses
@@ -158,31 +150,31 @@ lower_600 = [0.9 0.2 0.001 0.001 max(Current_600)+0.001];     % lower bounds
 [parameters_600v, residual_600v] = lsqcurvefit(Veqtn_600, initials, ExpCurrent600_Train, ExpVoltage600_Train, lower_600, upper_600);
 
 lower_650 = [0.9 0.2 0.001 0.001 max(Current_650)+0.001];     % lower bounds
-upper_650 = [parameters_600v(1) 1 1 10 6];                 % upper bounds
+upper_650 = [1.25 1 1 10 6];                 % upper bounds
 [parameters_650v, residual_650v] = lsqcurvefit(Veqtn_650, initials, ExpCurrent650_Train, ExpVoltage650_Train, lower_650, upper_650);
 
 lower_700 = [0.9 0.2 0.001 0.001 max(Current_700)+0.001];     % lower bounds
-upper_700 = [parameters_650v(1) 1 1 10 6];                 % upper bounds
+upper_700 = [1.25 1 1 10 6];                 % upper bounds
 [parameters_700v, residual_700v] = lsqcurvefit(Veqtn_700, initials, ExpCurrent700_Train, ExpVoltage700_Train, lower_700, upper_700);
 
 lower_750 = [0.9 0.2 0.001 0.001 max(Current_750)+0.001];     % lower bounds
-upper_750 = [parameters_700v(1) 1 1 10 6];                 % upper bounds
+upper_750 = [1.25 1 1 10 6];                 % upper bounds
 [parameters_750v, residual_750v] = lsqcurvefit(Veqtn_750, initials, ExpCurrent750_Train, ExpVoltage750_Train, lower_750, upper_750);
 
 lower_800 = [0.9 0.2 0.001 0.001 max(Current_800)+0.001];     % lower bounds
-upper_800 = [parameters_750v(1) 1 1 10 6];                 % upper bounds
+upper_800 = [1.25 1 1 10 6];                 % upper bounds
 [parameters_800v, residual_800v] = lsqcurvefit(Veqtn_800, initials, ExpCurrent800_Train, ExpVoltage800_Train, lower_800, upper_800);
 
 lower_850 = [0.9 0.2 0.001 0.001 max(Current_850)+0.001];     % lower bounds
-upper_850 = [parameters_800v(1) 1 1 10 6];                 % upper bounds
+upper_850 = [1.25 1 1 10 6];                 % upper bounds
 [parameters_850v, residual_850v] = lsqcurvefit(Veqtn_850, initials, ExpCurrent850_Train, ExpVoltage850_Train, lower_850, upper_850);
 
 lower_900 = [0.9 0.2 0.001 0.001 max(Current_900)+0.001];     % lower bounds
-upper_900 = [parameters_850v(1) 1 1 10 6];                 % upper bounds
+upper_900 = [1.25 1 1 10 6];                 % upper bounds
 [parameters_900v, residual_900v] = lsqcurvefit(Veqtn_900, initials, ExpCurrent900_Train, ExpVoltage900_Train, lower_900, upper_900);
 
 lower_1000 = [0.9 0.2 0.001 0.001 max(Current_1000)+0.001];     % lower bounds
-upper_1000 = [parameters_900v(1) 1 1 10 6];   
+upper_1000 = [1.25 1 1 10 6];   
 [parameters_1000v, residual_1000v] = lsqcurvefit(Veqtn_1000, initials, ExpCurrent1000_Train, ExpVoltage1000_Train, lower_1000, upper_1000);
 
 % Output table
@@ -205,7 +197,7 @@ disp(Outputs)
 % %% Build Model
 % % local function for cell voltage equation
 % Veqtn = @(params,j) params(1) ...
-%     - (8.314.*params(6))./(params(2).*2.*96485.34) .* log(j./params(4)) ...
+%     - (8.314.*params(6))./(params(2).*2.*96485.34) .* log((j+0.01)./params(4)) ...
 %     - j.*params(3) - (8.314.*params(6))./(2.*96485.34) .* (1 + 1/params(2)) ...
 %     .* log(params(5)./(params(5) - j));
 % % params = [V0, a, Ri, j0, jL, T (Kelvin)]

@@ -15,7 +15,7 @@ clc; clear;
 %% Load Data Sets
 Data600 = readmatrix('600iViP.xlsx'); Data650 = readmatrix('650iViP.xlsx');
 Data700 = readmatrix('700iViP.xlsx'); Data750 = readmatrix('750iViP.xlsx');
-Data800 = readmatrix('600iViP.xlsx'); Data850 = readmatrix('650iViP.xlsx');
+Data800 = readmatrix('600iViP.xlsx'); Data850 = readmatrix('850iViP.xlsx');
 Data900 = readmatrix('900iViP.xlsx'); Data1000 = readmatrix('1000iViP.xlsx');
 
 
