@@ -3,7 +3,7 @@ clc; clear
 %% User Inputs 
 dt = 1;             % time step (seconds)
 A = 500;            % cell reacting area (cm^2)
-delTemp = 10;       % temperature step for iteration
+delTemp = 50;       % temperature step for iteration
 delSplit = 0.05;    % power split step for iteration
 
 %% Mission Data
@@ -136,8 +136,8 @@ for j = 1:n
 end
 
 %% Plot Results wrt Power Split for each Temperature
-figure(1)
-plot(Splits, LNG_Total(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
+figure(7)
+plot(Splits, LNG_Total(1,:), '--', 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
 %plot(Splits, LNG_SOFC(1,:), Splits, LNG_Turbine(1,:), Splits, LNG_Duct(1,:))
 hold on
 for i = 2:length(Temps)
@@ -151,8 +151,8 @@ xlabel('Power Split (% Power from SOFC)')
 ylabel('LNG Usage (kg)')
 
 
-figure(2)
-plot(Splits, LNG_SOFC(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
+figure(8)
+plot(Splits, LNG_SOFC(1,:),'--', 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
 %plot(Splits, LNG_SOFC(1,:), Splits, LNG_Turbine(1,:), Splits, LNG_Duct(1,:))
 hold on
 for i = 2:length(Temps)
@@ -167,8 +167,8 @@ xlabel('Power Split (% Power from SOFC)')
 ylabel('LNG Usage (kg)')
 
 
-figure(3)
-plot(Splits, LNG_Duct(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
+figure(9)
+plot(Splits, LNG_Duct(1,:), '--', 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
 %plot(Splits, LNG_SOFC(1,:), Splits, LNG_Turbine(1,:), Splits, LNG_Duct(1,:))
 hold on
 for i = 2:length(Temps)
@@ -182,8 +182,8 @@ xlabel('Power Split (% Power from SOFC)')
 ylabel('LNG Usage (kg)')
 
 
-figure(4)
-plot(Splits, LNG_Turbine(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
+figure(10)
+plot(Splits, LNG_Turbine(1,:), '--', 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
 %plot(Splits, LNG_SOFC(1,:), Splits, LNG_Turbine(1,:), Splits, LNG_Duct(1,:))
 hold on
 for i = 2:length(Temps)
@@ -197,8 +197,8 @@ xlabel('Power Split (% Power from SOFC)')
 ylabel('LNG Usage (kg)')
 
 
-figure(5)
-plot(Splits, cellNum(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
+figure(11)
+plot(Splits, cellNum(1,:), '--', 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
 hold on
 for i = 2:length(Temps)
     plot(Splits, cellNum(i,:), 'DisplayName', sprintf('%i C', Temps(i)), LineWidth=1.5)
@@ -210,9 +210,9 @@ xlabel('Power Split (% Power from SOFC)')
 ylabel('Cell Number')
 
 
-figure(6)
+figure(12)
 subplot(2,2,1)
-plot(Splits, LNG_Total(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
+plot(Splits, LNG_Total(1,:), '--', 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
 hold on
 for i = 2:length(Temps)
     plot(Splits, LNG_Total(i,:), 'DisplayName', sprintf('%i C', Temps(i)), LineWidth=1.5)
@@ -224,7 +224,7 @@ xlabel('Power Split (% Power from SOFC)')
 ylabel('LNG Usage (kg)')
 
 subplot(2,2,2)
-plot(Splits, LNG_SOFC(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
+plot(Splits, LNG_SOFC(1,:), '--', 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
 %plot(Splits, LNG_SOFC(1,:), Splits, LNG_Turbine(1,:), Splits, LNG_Duct(1,:))
 hold on
 for i = 2:length(Temps)
@@ -239,7 +239,7 @@ xlabel('Power Split (% Power from SOFC)')
 ylabel('LNG Usage (kg)')
 
 subplot(2,2,3)
-plot(Splits, LNG_Turbine(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
+plot(Splits, LNG_Turbine(1,:), '--', 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
 %plot(Splits, LNG_SOFC(1,:), Splits, LNG_Turbine(1,:), Splits, LNG_Duct(1,:))
 hold on
 for i = 2:length(Temps)
@@ -253,7 +253,7 @@ xlabel('Power Split (% Power from SOFC)')
 ylabel('LNG Usage (kg)')
 
 subplot(2,2,4)
-plot(Splits, LNG_Duct(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
+plot(Splits, LNG_Duct(1,:), '--', 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
 %plot(Splits, LNG_SOFC(1,:), Splits, LNG_Turbine(1,:), Splits, LNG_Duct(1,:))
 hold on
 for i = 2:length(Temps)
@@ -268,7 +268,7 @@ ylabel('LNG Usage (kg)')
 
 
 %% Plot Results wrt Power Split for each Temperature
-figure(1)
+figure(13)
 plot(Splits, LNG_Total(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
 %plot(Splits, LNG_SOFC(1,:), Splits, LNG_Turbine(1,:), Splits, LNG_Duct(1,:))
 hold on
@@ -283,7 +283,7 @@ xlabel('Power Split (% Power from SOFC)')
 ylabel('LNG Usage (kg)')
 
 
-figure(2)
+figure(14)
 plot(Splits, LNG_SOFC(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
 %plot(Splits, LNG_SOFC(1,:), Splits, LNG_Turbine(1,:), Splits, LNG_Duct(1,:))
 hold on
@@ -299,7 +299,7 @@ xlabel('Power Split (% Power from SOFC)')
 ylabel('LNG Usage (kg)')
 
 
-figure(3)
+figure(15)
 plot(Splits, LNG_Duct(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
 %plot(Splits, LNG_SOFC(1,:), Splits, LNG_Turbine(1,:), Splits, LNG_Duct(1,:))
 hold on
@@ -314,7 +314,7 @@ xlabel('Power Split (% Power from SOFC)')
 ylabel('LNG Usage (kg)')
 
 
-figure(4)
+figure(16)
 plot(Splits, LNG_Turbine(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
 %plot(Splits, LNG_SOFC(1,:), Splits, LNG_Turbine(1,:), Splits, LNG_Duct(1,:))
 hold on
@@ -329,7 +329,7 @@ xlabel('Power Split (% Power from SOFC)')
 ylabel('LNG Usage (kg)')
 
 
-figure(5)
+figure(17)
 plot(Splits, cellNum(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
 hold on
 for i = 2:length(Temps)
@@ -342,7 +342,7 @@ xlabel('Power Split (% Power from SOFC)')
 ylabel('Cell Number')
 
 
-figure(6)
+figure(18)
 subplot(2,2,1)
 plot(Splits, LNG_Total(1,:), 'DisplayName', sprintf('%i C', Temps(1)), LineWidth=1.5)
 hold on
@@ -400,7 +400,7 @@ ylabel('LNG Usage (kg)')
 
 
 %% Plot Results wrt Temperature for each Power Split
-figure(7)
+figure(19)
 plot(Temps, LNG_Total(:,1), '--', 'DisplayName', sprintf('%.2f', Splits(1)), LineWidth=1.5)
 %plot(Temps, LNG_SOFC(:,1), Temps, LNG_Turbine(:,1), Temps, LNG_Duct(:,1))
 hold on
@@ -415,7 +415,7 @@ xlabel('Temperature (C)')
 ylabel('LNG Usage (kg)')
 
 
-figure(8)
+figure(20)
 plot(Temps, LNG_SOFC(:,1), '--', 'DisplayName', sprintf('%.2f', Splits(1)), LineWidth=1.5)
 %plot(Temps, LNG_SOFC(:,1), Temps, LNG_Turbine(:,1), Temps, LNG_Duct(:,1))
 hold on
@@ -430,7 +430,7 @@ xlabel('Temperature (C)')
 ylabel('LNG Usage (kg)')
 
 
-figure(9)
+figure(21)
 plot(Temps, LNG_Duct(:,1), '--', 'DisplayName', sprintf('%.2f', Splits(1)), LineWidth=1.5)
 %plot(Temps, LNG_SOFC(:,1), Temps, LNG_Turbine(:,1), Temps, LNG_Duct(:,1))
 hold on
@@ -445,7 +445,7 @@ xlabel('Temperature (C)')
 ylabel('LNG Usage (kg)')
 
 
-figure(10)
+figure(22)
 plot(Temps, LNG_Turbine(:,1), '--', 'DisplayName', sprintf('%.2f', Splits(1)), LineWidth=1.5)
 %plot(Temps, LNG_SOFC(:,1), Temps, LNG_Turbine(:,1), Temps, LNG_Duct(:,1))
 hold on
@@ -460,7 +460,7 @@ xlabel('Temperature (C)')
 ylabel('LNG Usage (kg)')
 
 
-figure(11)
+figure(23)
 plot(Temps, cellNum(:,1), '--', 'DisplayName', sprintf('%.2f', Splits(1)), LineWidth=1.5)
 hold on
 for i = 2:length(Splits)
@@ -473,7 +473,7 @@ xlabel('Temperature (C)')
 ylabel('Cell Number')
 
 
-figure(12)
+figure(24)
 subplot(2,2,1)
 plot(Temps, LNG_Total(:,1), '--', 'DisplayName', sprintf('%.2f', Splits(1)), LineWidth=1.5)
 hold on

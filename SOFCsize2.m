@@ -68,16 +68,16 @@ min_cells = ceil(min_cells);        % round up to nearest whole number
 
 %% Verify model - output i-V and i-P curves
 
-figure(101) % I-V Curve
-plot(i,V)
-xlabel('Current Density (A/cm^2)')
-ylabel('Voltage (V)')
-
-figure(102) % I-P Curve
-plot(i,power,"LineWidth", 2);
-ylim([0 1.2]);
-xlabel("Current Density (A/cm^2)",'FontSize',13)
-ylabel("Power Density (W/cm^2)",'FontSize',13)
+% figure(101) % I-V Curve
+% plot(i,V)
+% xlabel('Current Density (A/cm^2)')
+% ylabel('Voltage (V)')
+% 
+% figure(102) % I-P Curve
+% plot(i,power,"LineWidth", 2);
+% ylim([0 1.2]);
+% xlabel("Current Density (A/cm^2)",'FontSize',13)
+% ylabel("Power Density (W/cm^2)",'FontSize',13)
 
 end
 
