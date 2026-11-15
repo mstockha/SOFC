@@ -53,7 +53,7 @@ O2mol = h2mol./2;       % moles of oxygen
 % convert to mass flow rates (kg/s)
 H2dot = 0.002016 .* h2mol;          % hydrogen flow
 vapordot = h20mol .* 0.01802;       % steam flow
-airdot = O2mol .* 0.02896 ./ 0.21;          % oxygen flow
+airdot = O2mol .* 0.02896 ./ 0.21;  % oxygen flow
 
 % determine total flow (kg)
 total_H2 = sum(H2dot.*dt);          % total hydrogen
