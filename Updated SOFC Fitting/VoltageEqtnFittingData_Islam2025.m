@@ -13,35 +13,35 @@
 clc; clear;
 
 %% Load Data Sets
-Data = readmatrix('Islam2025.xlsx');
+Data = readmatrix('Islam_wAI.xlsx');
     
     % 600
 Current_600 = Data(:,1)'; Voltage_600 = Data(:,2)';
-i_600 = Data(:,3)'; Power_600 = Data(:,4)';
+i_600 = Data(:,1)'; Power_600 = Data(:,3)';
 
 Current_600 = Current_600(~isnan(Current_600));
 Voltage_600 = Voltage_600(~isnan(Voltage_600));
 i_600 = i_600(~isnan(i_600)); Power_600 = Power_600(~isnan(Power_600)); 
 
     % 650
-Current_650 = Data(:,6)'; Voltage_650 = Data(:,7)';
-i_650 = Data(:,8)'; Power_650 = Data(:,9)';
+Current_650 = Data(:,4)'; Voltage_650 = Data(:,5)';
+i_650 = Data(:,4)'; Power_650 = Data(:,6)';
 
 Current_650 = Current_650(~isnan(Current_650));
 Voltage_650 = Voltage_650(~isnan(Voltage_650));
 i_650 = i_650(~isnan(i_650)); Power_650 = Power_650(~isnan(Power_650)); 
 
     % 700
-Current_700 = Data(:,11)'; Voltage_700 = Data(:,12)';
-i_700 = Data(:,13)'; Power_700 = Data(:,14)';
+Current_700 = Data(:,7)'; Voltage_700 = Data(:,8)';
+i_700 = Data(:,7)'; Power_700 = Data(:,9)';
 
 Current_700 = Current_700(~isnan(Current_700));
 Voltage_700 = Voltage_700(~isnan(Voltage_700));
 i_700 = i_700(~isnan(i_700)); Power_700 = Power_700(~isnan(Power_700)); 
 
     % 750
-Current_750 = Data(:,16)'; Voltage_750 = Data(:,17)';
-i_750 = Data(:,18)'; Power_750 = Data(:,19)';
+Current_750 = Data(:,10)'; Voltage_750 = Data(:,11)';
+i_750 = Data(:,10)'; Power_750 = Data(:,12)';
 
 Current_750 = Current_750(~isnan(Current_750));
 Voltage_750 = Voltage_750(~isnan(Voltage_750));

@@ -8,7 +8,7 @@ eps = 1e-9;
 
 %% Plot Data
 
-load("VoltageFittingData_Islam2025.mat");     % load experimental dataset
+load("VoltageFittingData_Islam2025_AI.mat");     % load experimental dataset
 
 figure(1)       % experimental voltage curves
 yyaxis left
@@ -36,36 +36,36 @@ ylim([0,4])
 %% BUILD MODELS - Iron with YSZ %%
 % Parameters = [E0, a, j0, jL]
 % voltage equation based on chemistry losses
-Veqtn_600_Fe1 = @(params,j) params(1) - 0.0002855 * (600+273-298.15) ...
+Veqtn_600_Fe1 = @(params,j) params(1) ...
     + (8.314.*(600+273))./(2.*96485.34) .* log(0.97*sqrt(0.21)) ...
-    - ((8.314.*(600+273))./(params(2).*2.*96485.34) .* log((j+0.085)./params(3)) ...
-    + j.* (0.000275 / (3.24e5/(600+273) * exp(-0.96/(8.314*(600+273))))) ...
+    - ((8.314.*(600+273))./(params(2).*2.*96485.34) .* log((j+0.08)./params(3)) ...
+    + j.* (0.000275 / (9e5/(600+273) * exp(-0.96/(8.314*(600+273))))) ...
     + (8.314.*(600+273))./(2.*96485.34) .*(1+1/params(2)) .* log(params(4) ./ (params(4) - j)));
 
-Veqtn_650_Fe1 = @(params,j) params(1) - 0.0002855 * (650+273-298.15) ...
+Veqtn_650_Fe1 = @(params,j) params(1) ...
     + (8.314.*(650+273))./(2.*96485.34) .* log(0.97*sqrt(0.21)) ...
-    - ((8.314.*(650+273))./(params(2).*2.*96485.34) .* log((j+0.085)./params(3)) ...
-    + j.* (0.000275 / (3.24e5/(650+273) * exp(-0.96/(8.314*(650+273))))) ...
+    - ((8.314.*(650+273))./(params(2).*2.*96485.34) .* log((j+0.08)./params(3)) ...
+    + j.* (0.000275 / (9e5/(650+273) * exp(-0.96/(8.314*(650+273))))) ...
     + (8.314.*(650+273))./(2.*96485.34) .*(1+1/params(2)) .* log(params(4) ./ (params(4) - j)));
 
-Veqtn_700_Fe1 = @(params,j) params(1) - 0.0002855 * (700+273-298.15) ...
+Veqtn_700_Fe1 = @(params,j) params(1) ...
     + (8.314.*(700+273))./(2.*96485.34) .* log(0.97*sqrt(0.21)) ...
-    - ((8.314.*(700+273))./(params(2).*2.*96485.34) .* log((j+0.085)./params(3)) ...
-    + j.* (0.000275 / (3.24e5/(700+273) * exp(-0.96/(8.314*(700+273))))) ...
+    - ((8.314.*(700+273))./(params(2).*2.*96485.34) .* log((j+0.08)./params(3)) ...
+    + j.* (0.000275 / (9e5/(700+273) * exp(-0.96/(8.314*(700+273))))) ...
     + (8.314.*(700+273))./(2.*96485.34) .*(1+1/params(2)) .* log(params(4) ./ (params(4) - j)));
 
-Veqtn_750_Fe1 = @(params,j) params(1) - 0.0002855 * (750+273-298.15) ...
+Veqtn_750_Fe1 = @(params,j) params(1) ...
     + (8.314.*(750+273))./(2.*96485.34) .* log(0.97*sqrt(0.21)) ...
-    - ((8.314.*(750+273))./(params(2).*2.*96485.34) .* log((j+0.085)./params(3)) ...
-    + j.* (0.000275 / (3.24e5/(750+273) * exp(-0.96/(8.314*(750+273))))) ...
+    - ((8.314.*(750+273))./(params(2).*2.*96485.34) .* log((j+0.08)./params(3)) ...
+    + j.* (0.000275 / (9e5/(750+273) * exp(-0.96/(8.314*(750+273))))) ...
     + (8.314.*(750+273))./(2.*96485.34) .*(1+1/params(2)) .* log(params(4) ./ (params(4) - j)));
 
 % initial guess, upper and lower bounds
 initials = [1.1 0.4 0.1 4];           % initial guesses
-lower_600 = [0.9  0.2 1e-6  max(i_600)+0.001];     % lower bounds 600
-lower_650 = [0.9  0.2 1e-6  max(i_650)+0.001];     % lower bounds 650
-lower_700 = [0.9  0.2 1e-6  max(i_700)+0.001];     % lower bounds 700
-lower_750 = [0.9  0.2 1e-6  max(i_750)+0.001];     % lower bounds 750
+lower_600 = [0.9  0.1 1e-6  max(i_600)+0.001];     % lower bounds 600
+lower_650 = [0.9  0.1 1e-6  max(i_650)+0.001];     % lower bounds 650
+lower_700 = [0.9  0.1 1e-6  max(i_700)+0.001];     % lower bounds 700
+lower_750 = [0.9  0.1 1e-6  max(i_750)+0.001];     % lower bounds 750
 upper     = [1.25 1   10 8];                         % upper bounds
 
 [parameters_600, residual_600] = lsqcurvefit(Veqtn_600_Fe1, initials, Current_600, Voltage_600, lower_600, upper);
@@ -90,10 +90,10 @@ disp(Outputs)
 
 % anonymous function for general temperature (electrolyte = YSZ + Fe, P =
 % 1atm)
-Veqtn_Fe1 = @(params,j) params(1) - 0.0002855 * (params(5) + 273 - 298.15) ...
+Veqtn_Fe1 = @(params,j) params(1) ...
     + (8.314.*(params(5)+273))./(2.*96485.34) .* log(0.97*sqrt(0.21)) ...
-    - ((8.314.*(params(5)+273))./(params(2).*2.*96485.34) .* log((j+0.1)./params(3)) ...
-    + j.* (0.000275 / (3.24e5/(params(5)+273) * exp(-0.96/(8.314*(params(5)+273))))) ...
+    - ((8.314.*(params(5)+273))./(params(2).*2.*96485.34) .* log((j+0.08)./params(3)) ...
+    + j.* (0.000275 / (9e5/(params(5)+273) * exp(-0.96/(8.314*(params(5)+273))))) ...
     + (8.314.*(params(5)+273))./(2.*96485.34) .*(1+1/params(2)) .* log(params(4) ./ (params(4) - j)));
 
 % Goodness of Fit
@@ -156,3 +156,150 @@ plot(Power_750, P750_Islam, '*', Power_750, Power_750, 'r-')
 xlabel('Actual Power (W/cm^2)')
 ylabel('Predicted Power (W/cm^2)')
 
+
+% %% Plot Data
+% 
+% load("VoltageFittingData_Hsieh1atm.mat");     % load experimental dataset
+% 
+% figure(3)       % experimental voltage curves
+% yyaxis left
+% plot(Current_750_Hsieh, Voltage_750_Hsieh)
+% hold on
+% plot(Current_800_Hsieh, Voltage_800_Hsieh, Current_850_Hsieh, Voltage_850_Hsieh)
+% hold off
+% title('Cell Voltage Data')
+% xlabel('Current Density (A/cm^2)')
+% ylabel('Cell Voltage (V)')
+% ylim([0.7,1.2])
+% 
+% yyaxis right        % experimental power curves
+% plot(i_750_Hsieh, Power_750_Hsieh)
+% hold on
+% plot(i_800_Hsieh, Power_800_Hsieh, i_850_Hsieh, Power_850_Hsieh)
+% hold off
+% title('Data from Hsieh, et al., 2015')
+% xlabel('Current Density (A/cm^2)')
+% ylabel('Power Density (W/cm^2)')
+% legend('750', '800', '850')
+% xlim([0,0.7])
+% ylim([0,0.5])
+% 
+% 
+% %% BUILD MODELS - Just YSZ %%
+% % Parameters = [V0, a, j0, jL]
+% % voltage equation based on chemistry losses
+% Veqtn_750_YSZ1 = @(params,j) params(1) ...
+%     + (8.314.*(750+273))./(2.*96485.34) .* log(((5/9)*sqrt(0.21))) ...
+%     - ((8.314.*(750+273))./(params(2).*2.*96485.34) .* log((j+0.08)./params(3)) ...
+%     + j.* (0.0005 / (9e5/(750+273) * exp(-1.48/(8.314*(params(5)+273))))) ...
+%     + (8.314.*(params(5)+273))./(2.*96485.34) .*(1+1/params(2)) .* log(params(4) ./ (params(4) - j)));
+% 
+% @(params,j) params(1) ...
+%     + (8.314.*(750+273))./(2.*96485.34) .* log(((5/9)*sqrt(0.21))) ...
+%     - ((8.314.*(750+273))./(params(2).*2.*96485.34) .* log((j+0.01)./params(3)) ...
+%     + j.*(48785*exp(-0.017*(750))) ...
+%     + (8.314.*(750+273))./(2.*96485.34) .* (1 + 1/params(2)) ...
+%     .* log(params(4)./(params(4) - j)));
+% 
+% Veqtn_800_YSZ1 = @(params,j) params(1) ...
+%     + (8.314.*(800+273))./(2.*96485.34) .* log(((5/9)*sqrt(0.21))) ...
+%     - ((8.314.*(800+273))./(params(2).*2.*96485.34) .* log((j+0.01)./params(3)) ...
+%     + j.*(48785*exp(-0.017*(800))) ...
+%     + (8.314.*(800+273))./(2.*96485.34) .* (1 + 1/params(2)) ...
+%     .* log(params(4)./(params(4) - j)));
+% 
+% Veqtn_850_YSZ1 = @(params,j) params(1) ...
+%     + (8.314.*(850+273))./(2.*96485.34) .* log(((5/9)*sqrt(0.21))) ...
+%     - ((8.314.*(850+273))./(params(2).*2.*96485.34) .* log((j+0.01)./params(3)) ...
+%     + j.*(48785*exp(-0.017*(850))) ...
+%     + (8.314.*(850+273))./(2.*96485.34) .* (1 + 1/params(2)) ...
+%     .* log(params(4)./(params(4) - j)));
+% 
+% % initial guess, upper and lower bounds
+% initials = [1.06 0.5 0.1 4];           % initial guesses
+% lower_750 = [0.8  0.2 1e-6  max(i_750_Hsieh)+0.001];     % lower bounds 750
+% lower_800 = [0.8  0.2 1e-6  max(i_800_Hsieh)+0.001];     % lower bounds 750
+% lower_850 = [0.8  0.2 1e-6  max(i_850_Hsieh)+0.001];     % lower bounds 750
+% upper     = [1.25 1   10 10];                         % upper bounds
+% 
+% [parameters_750_Hsieh, residual_750_Hsieh] = lsqcurvefit(Veqtn_750_YSZ1, initials, Current_750_Hsieh, Voltage_750_Hsieh, lower_750, upper);
+% [parameters_800_Hsieh, residual_800_Hsieh] = lsqcurvefit(Veqtn_800_YSZ1, initials, Current_800_Hsieh, Voltage_800_Hsieh, lower_800, upper);
+% [parameters_850_Hsieh, residual_850_Hsieh] = lsqcurvefit(Veqtn_850_YSZ1, initials, Current_850_Hsieh, Voltage_850_Hsieh, lower_850, upper);
+% 
+% % Output table
+%     % column vectors
+% Temperature = [750; 800; 850];
+% V0 = [parameters_750_Hsieh(1); parameters_800_Hsieh(1); parameters_850_Hsieh(1)];
+% % V0 = [0.95; 0.95; 0.95; 0.95; 0.95];
+% a  = [parameters_750_Hsieh(2); parameters_800_Hsieh(2); parameters_850_Hsieh(2)];
+% j0 = [parameters_750_Hsieh(3); parameters_800_Hsieh(3); parameters_850_Hsieh(3)];
+% jL = [parameters_750_Hsieh(4); parameters_800_Hsieh(4); parameters_850_Hsieh(4)];
+% residuals = [residual_750_Hsieh; residual_800_Hsieh; residual_850_Hsieh];
+%     % create table
+% Outputs = table(Temperature, V0, a, j0, jL, residuals);
+%     % display table
+% fprintf('\n\tParameter Table Based on Non-Linear Least Squares - YSZ\n')
+% disp(Outputs)
+% 
+% % linear fit for best fit parameters: cve coefficents fit as Var = f(T)
+% temps = Temperature + 273;
+% paramsV0_YSZ = polyfit(temps, V0, 2); 
+% params_a_YSZ = polyfit(temps, a, 2); 
+% paramsj0_YSZ = polyfit(temps, j0, 2);   
+% paramsjL_YSZ = polyfit(temps, jL, 2); 
+% 
+% 
+% % anonymous function for general temperature (ele_Islamctrolyte = YSZ + YSZ, P =
+% % 1atm)
+% Veqtn_YSZ1 = @(params,j) params(1) ...
+%     + (8.314.*(params(5)+273))./(2.*96485.34) .* log(((5/9)*sqrt(0.21))) ...
+%     - ((8.314.*(params(5)+273))./(params(2).*2.*96485.34) .* log((j+0.01)./params(3)) ...
+%     + j.*(48785*exp(-0.017*(params(5)))) ...
+%     + (8.314.*(params(5)+273))./(2.*96485.34) .* (1 + 1/params(2)) ...
+%     .* log(params(4)./(params(4) - j)));
+% 
+% % Goodness of Fit
+%     % set parameters
+% params750_Hsieh = [parameters_750_Hsieh, 750];
+% params800_Hsieh = [parameters_800_Hsieh, 800];
+% params850_Hsieh = [parameters_850_Hsieh, 850];
+%     % Experimental data collection
+% Volts750_Hsieh = Veqtn_YSZ1(params750_Hsieh, Current_750_Hsieh); P750_Hsieh = Veqtn_YSZ1(params750_Hsieh, i_750_Hsieh)  .* i_750_Hsieh;
+% Volts800_Hsieh = Veqtn_YSZ1(params800_Hsieh, Current_800_Hsieh); P800_Hsieh = Veqtn_YSZ1(params800_Hsieh, i_800_Hsieh)  .* i_800_Hsieh;
+% Volts850_Hsieh = Veqtn_YSZ1(params850_Hsieh, Current_850_Hsieh); P850_Hsieh = Veqtn_YSZ1(params850_Hsieh, i_850_Hsieh)  .* i_850_Hsieh;
+%     % find residuals
+% ResVolts750_Hsieh = Volts750_Hsieh - Voltage_750_Hsieh; ResP750_Hsieh = P750_Hsieh - Power_750_Hsieh;
+% ResVolts800_Hsieh = Volts800_Hsieh - Voltage_800_Hsieh; ResP800_Hsieh = P800_Hsieh - Power_800_Hsieh;
+% ResVolts850_Hsieh = Volts850_Hsieh - Voltage_850_Hsieh; ResP850_Hsieh = P850_Hsieh - Power_850_Hsieh;
+% 
+% figure(4)
+% subplot(2,3,1)
+% plot(Voltage_750_Hsieh, Volts750_Hsieh, '*', Voltage_750_Hsieh, Voltage_750_Hsieh, 'r-')
+% xlabel('Actual Voltage (V)')
+% ylabel('Predicted Voltage (V)')
+% 
+% subplot(2,3,2)
+% plot(Voltage_800_Hsieh, Volts800_Hsieh, '*', Voltage_800_Hsieh, Voltage_800_Hsieh, 'r-')
+% xlabel('Actual Voltage (V)')
+% ylabel('Predicted Voltage (V)')
+% 
+% subplot(2,3,3)
+% plot(Voltage_850_Hsieh, Volts850_Hsieh, '*', Voltage_850_Hsieh, Voltage_850_Hsieh, 'r-')
+% xlabel('Actual Voltage (V)')
+% ylabel('Predicted Voltage (V)')
+% 
+% subplot(2,3,4)
+% plot(Power_750_Hsieh, P750_Hsieh, '*', Power_750_Hsieh, Power_750_Hsieh, 'r-')
+% xlabel('Actual Power (W/cm^2)')
+% ylabel('Predicted Power (W/cm^2)')
+% 
+% subplot(2,3,5)
+% plot(Power_800_Hsieh, P800_Hsieh, '*', Power_800_Hsieh, Power_800_Hsieh, 'r-')
+% xlabel('Actual Power (W/cm^2)')
+% ylabel('Predicted Power (W/cm^2)')
+% 
+% subplot(2,3,6)
+% plot(Power_850_Hsieh, P850_Hsieh, '*', Power_850_Hsieh, Power_850_Hsieh, 'r-')
+% xlabel('Actual Power (W/cm^2)')
+% ylabel('Predicted Power (W/cm^2)')
+% 
