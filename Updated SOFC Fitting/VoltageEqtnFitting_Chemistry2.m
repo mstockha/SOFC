@@ -4,6 +4,7 @@
 % 
 
 clc; clear;
+eps = 1e-9;
 
 %% Plot Data
 
