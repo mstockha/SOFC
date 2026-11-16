@@ -38,40 +38,40 @@ ylim([0,4])
 % voltage equation based on chemistry losses
 Veqtn_600_Fe1 = @(params,j) params(1) ...
     + (8.314.*(600+273))./(2.*96485.34) .* log(0.97*sqrt(0.21)) ...
-    - (8.314.*(600+273))./(params(2).*2.*96485.34) .* log((j+0.08)./params(3)) ...
-    - j.* (0.000275 / (5e5/(600+273) * exp(-1.15/(8.314*(600+273))))) ...
-    - (8.314.*(600+273))./(2.*96485.34) .*(1+1/params(2)) .* log(params(4) ./ (params(4) - j));
+    - ((8.314.*(600+273))./(params(2).*2.*96485.34) .* log((j+0.08)./params(3)) ...
+    + j.* params(5) ... (0.000275 / (5e5/(600+273) * exp(-1.15/(8.314*(600+273))))) ...
+    + (8.314.*(600+273))./(2.*96485.34) .*(1+1/params(2)) .* log(params(4) ./ (params(4) - j)));
 
 Veqtn_650_Fe1 = @(params,j) params(1) ...
     + (8.314.*(650+273))./(2.*96485.34) .* log(0.97*sqrt(0.21)) ...
-    - (8.314.*(650+273))./(params(2).*2.*96485.34) .* log((j+0.08)./params(3)) ...
-    - j.* (0.000275 / (5e5/(650+273) * exp(-1.15/(8.314*(650+273))))) ...
-    - (8.314.*(650+273))./(2.*96485.34) .*(1+1/params(2)) .* log(params(4) ./ (params(4) - j)));
+    - ((8.314.*(650+273))./(params(2).*2.*96485.34) .* log((j+0.08)./params(3)) ...
+    + j.* params(5) ... (0.000275 / (5e5/(650+273) * exp(-1.15/(8.314*(650+273))))) ...
+    + (8.314.*(650+273))./(2.*96485.34) .*(1+1/params(2)) .* log(params(4) ./ (params(4) - j)));
 
 Veqtn_700_Fe1 = @(params,j) params(1) ...
     + (8.314.*(700+273))./(2.*96485.34) .* log(0.97*sqrt(0.21)) ...
     - ((8.314.*(700+273))./(params(2).*2.*96485.34) .* log((j+0.08)./params(3)) ...
-    + j.* (0.000275 / (5e5/(700+273) * exp(-1.15/(8.314*(700+273))))) ...
+    + j.* params(5) ... (0.000275 / (5e5/(700+273) * exp(-1.15/(8.314*(700+273))))) ...
     + (8.314.*(700+273))./(2.*96485.34) .*(1+1/params(2)) .* log(params(4) ./ (params(4) - j)));
 
 Veqtn_750_Fe1 = @(params,j) params(1) ...
     + (8.314.*(750+273))./(2.*96485.34) .* log(0.97*sqrt(0.21)) ...
     - ((8.314.*(750+273))./(params(2).*2.*96485.34) .* log((j+0.08)./params(3)) ...
-    + j.* (0.000275 / (5e5/(750+273) * exp(-1.15/(8.314*(750+273))))) ...
+    + j.* params(5) ... (0.000275 / (5e5/(750+273) * exp(-1.15/(8.314*(750+273))))) ...
     + (8.314.*(750+273))./(2.*96485.34) .*(1+1/params(2)) .* log(params(4) ./ (params(4) - j)));
 
 % initial guess, upper and lower bounds
-initials = [1.1 0.4 0.1 4];           % initial guesses
-lower_600 = [0.9  0.1 1e-6  max(i_600)+0.001];     % lower bounds 600
-lower_650 = [0.9  0.1 1e-6  max(i_650)+0.001];     % lower bounds 650
-lower_700 = [0.9  0.1 1e-6  max(i_700)+0.001];     % lower bounds 700
-lower_750 = [0.9  0.1 1e-6  max(i_750)+0.001];     % lower bounds 750
-upper     = [1.25 1   10 8];                         % upper bounds
+initials = [1.1 0.4 0.1 4, 0.04];           % initial guesses
+lower_600 = [0.9  0.1 1e-6  max(i_600)+0.001, 0];     % lower bounds 600
+lower_650 = [0.9  0.1 1e-6  max(i_650)+0.001 0];     % lower bounds 650
+lower_700 = [0.9  0.1 1e-6  max(i_700)+0.001 0];     % lower bounds 700
+lower_750 = [0.9  0.1 1e-6  max(i_750)+0.001 0];     % lower bounds 750
+upper     = [1.25 1   10 8 1];                         % upper bounds
 
-[parameters_600, residual_600] = lsqcurvefit(Veqtn_600_Fe1, initials, Current_600, Voltage_600, lower_600, upper);
-[parameters_650, residual_650] = lsqcurvefit(Veqtn_650_Fe1, initials, Current_650, Voltage_650, lower_650, upper);
-[parameters_700, residual_700] = lsqcurvefit(Veqtn_700_Fe1, initials, Current_700, Voltage_700, lower_700, upper);
-[parameters_750, residual_750] = lsqcurvefit(Veqtn_750_Fe1, initials, Current_750, Voltage_750, lower_750, upper);
+[parameters_600_Islam, residual_600] = lsqcurvefit(Veqtn_600_Fe1, initials, Current_600, Voltage_600, lower_600, upper);
+[parameters_650_Islam, residual_650] = lsqcurvefit(Veqtn_650_Fe1, initials, Current_650, Voltage_650, lower_650, upper);
+[parameters_700_Islam, residual_700] = lsqcurvefit(Veqtn_700_Fe1, initials, Current_700, Voltage_700, lower_700, upper);
+[parameters_750_Islam, residual_750] = lsqcurvefit(Veqtn_750_Fe1, initials, Current_750, Voltage_750, lower_750, upper);
 
 % Output table
     % column vectors
@@ -81,9 +81,10 @@ V0 = [parameters_600(1); parameters_650(1); parameters_700(1); parameters_750(1)
 a  = [parameters_600(2); parameters_650(2); parameters_700(2); parameters_750(2)];
 j0 = [parameters_600(3); parameters_650(3); parameters_700(3); parameters_750(3)];
 jL = [parameters_600(4); parameters_650(4); parameters_700(4); parameters_750(4)];
+ASR = [parameters_600(5); parameters_650(5); parameters_700(5); parameters_750(5)];
 residuals = [residual_600; residual_650; residual_700; residual_750];
     % create table
-Outputs = table(Temperature, V0, a, j0, jL, residuals);
+Outputs = table(Temperature, V0, a, ASR, j0, jL, residuals);
     % display table
 fprintf('\n\tParameter Table Based on Non-Linear Least Squares - Fe\n')
 disp(Outputs)
@@ -91,24 +92,17 @@ disp(Outputs)
 % anonymous function for general temperature (electrolyte = YSZ + Fe, P =
 % 1atm)
 Veqtn_Fe1 = @(params,j) params(1) ...
-    + (8.314.*(params(5)+273))./(2.*96485.34) .* log(0.97*sqrt(0.21)) ...
-    - ((8.314.*(params(5)+273))./(params(2).*2.*96485.34) .* log((j+0.08)./params(3)) ...
-    + j.* (0.000275 / (5e5/(params(5)+273) * exp(-1.15/(8.314*(params(5)+273))))) ...
-    + (8.314.*(params(5)+273))./(2.*96485.34) .*(1+1/params(2)) .* log(params(4) ./ (params(4) - j)));
+    + (8.314.*(params(6)+273))./(2.*96485.34) .* log(0.97*sqrt(0.21)) ...
+    - ((8.314.*(params(6)+273))./(params(2).*2.*96485.34) .* log((j+0.08)./params(3)) ...
+    + j.* params(5) ... (0.000275 / (5e5/(params(5)+273) * exp(-1.15/(8.314*(params(5)+273))))) ...
+    + (8.314.*(params(6)+273))./(2.*96485.34) .*(1+1/params(2)) .* log(params(4) ./ (params(4) - j)));
 
 % Goodness of Fit
-    % set parameters
-temps = Temperature + 273;
-params600_Islam = [parameters_600, 600];
-params650_Islam = [parameters_650, 650];
-params700_Islam = [parameters_700, 700];
-params750_Islam = [parameters_750, 750];
-
     % Experimental data collection
-Volts600_Islam = Veqtn_Fe1(params600_Islam, Current_600); P600_Islam = Veqtn_Fe1(params600_Islam, i_600) .* i_600;
-Volts650_Islam = Veqtn_Fe1(params650_Islam, Current_650); P650_Islam = Veqtn_Fe1(params650_Islam, i_650)  .* i_650;
-Volts700_Islam = Veqtn_Fe1(params700_Islam, Current_700); P700_Islam = Veqtn_Fe1(params700_Islam, i_700)  .* i_700;
-Volts750_Islam = Veqtn_Fe1(params750_Islam, Current_750); P750_Islam = Veqtn_Fe1(params750_Islam, i_750)  .* i_750;
+Volts600_Islam = Veqtn_Fe1(parameters600_Islam, Current_600); P600_Islam = Veqtn_Fe1(parameters600_Islam, i_600) .* i_600;
+Volts650_Islam = Veqtn_Fe1(parameters650_Islam, Current_650); P650_Islam = Veqtn_Fe1(parameters650_Islam, i_650)  .* i_650;
+Volts700_Islam = Veqtn_Fe1(parameters700_Islam, Current_700); P700_Islam = Veqtn_Fe1(parameters700_Islam, i_700)  .* i_700;
+Volts750_Islam = Veqtn_Fe1(parameters750_Islam, Current_750); P750_Islam = Veqtn_Fe1(parameters750_Islam, i_750)  .* i_750;
     % find residuals
 ResVolts600_Islam = Volts600_Islam - Voltage_600; ResP600_Islam = P600_Islam - Power_600;
 ResVolts650_Islam = Volts650_Islam - Voltage_650; ResP650_Islam = P650_Islam - Power_650;
