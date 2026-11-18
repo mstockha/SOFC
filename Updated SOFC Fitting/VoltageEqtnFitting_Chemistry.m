@@ -92,7 +92,7 @@ Outputs = table(Temperature, V0, a, j0, jL, residuals);
 fprintf('\n\tParameter Table Based on Non-Linear Least Squares - Fe\n')
 disp(Outputs)
 
-% linear fit for best fit parameters: cve coefficents fit as Var = f(T)
+% fit for best fit parameters: cve coefficents fit as Var = f(T)
 temps = Temperature + 273;
 paramsV0_Fe = polyfit(temps, V0, 3); 
 params_a_Fe = polyfit(temps, a, 3); 
