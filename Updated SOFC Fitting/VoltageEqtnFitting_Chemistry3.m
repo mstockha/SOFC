@@ -38,29 +38,29 @@ ylim([0,4])
 % voltage equation based on chemistry losses
 Veqtn_600_Fe1 = @(params,j) params(1) ...
     + (8.314.*873)./(2.*96485.34) .* log((0.97*sqrt(0.21))) ...
-    - ((8.314.*873)./(params(2).*2.*96485.34) .* log((j + jLeak)./params(4)) ...
-    + j.* (0.000275 / params(3)) ...
-    + params(5) .* log(params(6) ./ (params(6) - (j + jLeak))));
+    - (8.314.*873)./(params(2).*2.*96485.34) .* log((j + jLeak)./params(4)) ...
+    - j.* (0.000275 + 0.031 + 0.00175) ./ params(3) ...
+    - params(5).*log(1 - (j+jLeak)./params(6));
     % + params(5) .* log(params(6) ./ (params(6) - (j + jLeak))));
     % j + jLeak
 
 Veqtn_650_Fe1 = @(params,j) params(1) ...
     + (8.314.*923)./(2.*96485.34) .* log((0.97*sqrt(0.21))) ...
-    - ((8.314.*923)./(params(2).*2.*96485.34) .* log((j + jLeak)./params(4)) ...
-    + j.* (0.000275 / params(3)) ...
-    + params(5) .* log(params(6) ./ (params(6) - (j + jLeak))));
+    - (8.314.*923)./(params(2).*2.*96485.34) .* log((j + jLeak)./params(4)) ...
+    - j.* (0.000275 + 0.031 + 0.00175) ./ params(3) ...
+    - params(5).*log(1 - (j+jLeak)./params(6));
 
 Veqtn_700_Fe1 = @(params,j) params(1) ...
     + (8.314.*973)./(2.*96485.34) .* log((0.97*sqrt(0.21))) ...
-    - ((8.314.*973)./(params(2).*2.*96485.34) .* log((j + jLeak)./params(4)) ...
-    + j.* (0.000275 / params(3)) ...
-    + params(5) .* log(params(6) ./ (params(6) - (j + jLeak))));
+    - (8.314.*973)./(params(2).*2.*96485.34) .* log((j + jLeak)./params(4)) ...
+    - j.* (0.000275 + 0.031 + 0.00175) ./ params(3) ...
+    - params(5).*log(1 - (j+jLeak)./params(6));
 
 Veqtn_750_Fe1 = @(params,j) params(1) ...
     + (8.314.*1023)./(2.*96485.34) .* log((0.97*sqrt(0.21))) ...
-    - ((8.314.*1023)./(params(2).*2.*96485.34) .* log((j + jLeak)./params(4)) ...
-    + j.* (0.000275 / params(3)) ...
-    + params(5) .* log(params(6) ./ (params(6) - (j + jLeak))));
+    - (8.314.*1023)./(params(2).*2.*96485.34) .* log((j + jLeak)./params(4)) ...
+    - j.* (0.000275 + 0.031 + 0.00175) ./ params(3) ...
+    - params(5).*log(1 - (j+jLeak)./params(6));
 
 % initial guess, upper and lower bounds
 % Params =  [1-E0, 2-a, 3-S0,  4-j0,  5-c,  6-jL]
@@ -107,9 +107,9 @@ paramsjL_Fe = polyfit(temps, jL, 3);
 % voltage equation based on chemistry losses
 Veqtn_Fe1 = @(params,j) params(1) ...
     + (8.314.*params(7))./(2.*96485.34) .* log((0.97*sqrt(0.21))) ...
-    - ((8.314.*params(7))./(params(2).*2.*96485.34) .* log((j + jLeak)./params(4)) ...
-    + j.* (0.000275 / params(3)) ...
-    + params(5) .* log(params(6) ./ (params(6) - (j + jLeak))));
+    - (8.314.*params(7))./(params(2).*2.*96485.34) .* log((j + jLeak)./params(4)) ...
+    - j.* (0.000275 + 0.031 + 0.00175) ./ params(3) ...
+    - params(5).*log(1 - (j+jLeak)./params(6));
 
 % % Goodness of Fit
 %     % set parameters
@@ -135,6 +135,27 @@ ResVolts600_Islam = Volts600_Islam - Voltage_600; ResP600_Islam = P600_Islam - P
 ResVolts650_Islam = Volts650_Islam - Voltage_650; ResP650_Islam = P650_Islam - Power_650;
 ResVolts700_Islam = Volts700_Islam - Voltage_700; ResP700_Islam = P700_Islam - Power_700;
 ResVolts750_Islam = Volts750_Islam - Voltage_750; ResP750_Islam = P750_Islam - Power_750;
+
+avgV600_Islam = mean(Voltage_600); avgP600_Islam = mean(Power_600);
+avgV650_Islam = mean(Voltage_600); avgP650_Islam = mean(Power_600);
+avgV700_Islam = mean(Voltage_600); avgP700_Islam = mean(Power_600);
+avgV750_Islam = mean(Voltage_600); avgP750_Islam = mean(Power_600);
+
+SSRv600_Islam = sum((Volts600_Islam - avgV600_Islam).^2); SSRp600_Islam  = sum((P600_Islam - avgP600_Islam).^2);
+SSRv650_Islam = sum((Volts650_Islam - avgV650_Islam).^2); SSRp650_Islam  = sum((P650_Islam - avgP650_Islam).^2);
+SSRv700_Islam = sum((Volts700_Islam - avgV700_Islam).^2); SSRp700_Islam  = sum((P700_Islam - avgP700_Islam).^2);
+SSRv750_Islam = sum((Volts750_Islam - avgV750_Islam).^2); SSRp750_Islam  = sum((P750_Islam - avgP750_Islam).^2);
+
+SSTv600_Islam = sum((Voltage_600 - avgV600_Islam).^2); SSTp600_Islam  = sum((Power_600 - avgP600_Islam).^2);
+SSTv650_Islam = sum((Voltage_650 - avgV650_Islam).^2); SSTp650_Islam  = sum((Power_650 - avgP650_Islam).^2);
+SSTv700_Islam = sum((Voltage_700 - avgV700_Islam).^2); SSTp700_Islam  = sum((Power_700 - avgP700_Islam).^2);
+SSTv750_Islam = sum((Voltage_750 - avgV750_Islam).^2); SSTp750_Islam  = sum((Power_750 - avgP750_Islam).^2);
+
+% Find R^2
+ResVolts600_Islam = SSRv600_Islam/SSTv600_Islam; ResP600_Islam = SSRp600_Islam/SSTp600_Islam;
+ResVolts650_Islam = SSRv650_Islam/SSTv650_Islam; ResP650_Islam = SSRp650_Islam/SSTp650_Islam;
+ResVolts700_Islam = SSRv700_Islam/SSTv700_Islam; ResP700_Islam = SSRp700_Islam/SSTp700_Islam;
+ResVolts750_Islam = SSRv750_Islam/SSTv750_Islam; ResP750_Islam = SSRp750_Islam/SSTp750_Islam;
 
 figure(2)
 subplot(2,4,1)
@@ -182,49 +203,50 @@ figure(3)
 subplot(2,4,1)
 plot(Voltage_600, ResVolts600_Islam, '*')
 xlabel('Actual Voltage (V)')
-ylabel('Predicted Voltage (V)')
+ylabel('R^2')
 legend('600 C')
+
 
 subplot(2,4,2)
 plot(Voltage_650, ResVolts650_Islam, '*')
 xlabel('Actual Voltage (V)')
-ylabel('Predicted Voltage (V)')
+ylabel('R^2')
 legend('650 C')
 
 subplot(2,4,3)
 plot(Voltage_700, ResVolts700_Islam, '*')
 xlabel('Actual Voltage (V)')
-ylabel('Predicted Voltage (V)')
+ylabel('R^2')
 legend('700 C')
 
 subplot(2,4,4)
 plot(Voltage_750, ResVolts750_Islam, '*')
 xlabel('Actual Voltage (V)')
-ylabel('Predicted Voltage (V)')
+ylabel('R^2')
 legend('750 C')
 
 subplot(2,4,5)
 plot(Power_600, ResP600_Islam, '*')
 xlabel('Actual Power (W/cm^2)')
-ylabel('Predicted Power (W/cm^2)')
+ylabel('R^2')
 legend('600 C')
 
 subplot(2,4,6)
 plot(Power_650, ResP650_Islam, '*')
 xlabel('Actual Power (W/cm^2)')
-ylabel('Predicted Power (W/cm^2)')
+ylabel('R^2')
 legend('650 C')
 
 subplot(2,4,7)
 plot(Power_700, ResP700_Islam, '*')
 xlabel('Actual Power (W/cm^2)')
-ylabel('Predicted Power (W/cm^2)')
+ylabel('R^2')
 legend('700 C')
 
 subplot(2,4,8)
 plot(Power_750, ResP750_Islam, '*')
 xlabel('Actual Power (W/cm^2)')
-ylabel('Predicted Power (W/cm^2)')
+ylabel('R^2')
 legend('750 C')
 
 % plotting points over trend
@@ -233,8 +255,8 @@ yyaxis left
 plot(Current_600, Voltage_600)
 hold on
 plot(Current_650, Voltage_650, Current_700, Voltage_700, Current_750, Voltage_750)
-plot(Current_600, Volts600_Islam, '*')
-plot(Current_650, Volts650_Islam, '*', Current_700, Volts700_Islam, '*', Current_750, Volts750_Islam, '*')
+plot(Current_600, Volts600_Islam, 'o')
+plot(Current_650, Volts650_Islam, '+', Current_700, Volts700_Islam, '^', Current_750, Volts750_Islam, 'square')
 hold off
 xlabel('Current Density (A/cm^2)')
 ylabel('Cell Voltage (V)')
@@ -244,8 +266,8 @@ yyaxis right        % experimental power curves
 plot(i_600, Power_600)
 hold on
 plot(i_650, Power_650, i_700, Power_700, i_750, Power_750)
-plot(i_600, P600_Islam, '*')
-plot(i_650, P650_Islam, '*', i_700, P700_Islam, '*', i_750, P750_Islam, '*')
+plot(i_600, P600_Islam, 'o')
+plot(i_650, P650_Islam, '+', i_700, P700_Islam, '^', i_750, P750_Islam, 'square')
 hold off
 title('Data from Islam, et al., 2025')
 xlabel('Current Density (A/cm^2)')
