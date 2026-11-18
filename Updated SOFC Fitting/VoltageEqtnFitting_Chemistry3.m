@@ -177,8 +177,58 @@ plot(Power_750, P750_Islam, '*', Power_750, Power_750, 'r-')
 xlabel('Actual Power (W/cm^2)')
 ylabel('Predicted Power (W/cm^2)')
 
+% residual vs predicted plots
+figure(3)
+subplot(2,4,1)
+plot(Voltage_600, ResVolts600_Islam, '*')
+xlabel('Actual Voltage (V)')
+ylabel('Predicted Voltage (V)')
+legend('600 C')
 
-figure(3)       % experimental voltage curves
+subplot(2,4,2)
+plot(Voltage_650, ResVolts650_Islam, '*')
+xlabel('Actual Voltage (V)')
+ylabel('Predicted Voltage (V)')
+legend('650 C')
+
+subplot(2,4,3)
+plot(Voltage_700, ResVolts700_Islam, '*')
+xlabel('Actual Voltage (V)')
+ylabel('Predicted Voltage (V)')
+legend('700 C')
+
+subplot(2,4,4)
+plot(Voltage_750, ResVolts750_Islam, '*')
+xlabel('Actual Voltage (V)')
+ylabel('Predicted Voltage (V)')
+legend('750 C')
+
+subplot(2,4,5)
+plot(Power_600, ResP600_Islam, '*')
+xlabel('Actual Power (W/cm^2)')
+ylabel('Predicted Power (W/cm^2)')
+legend('600 C')
+
+subplot(2,4,6)
+plot(Power_650, ResP650_Islam, '*')
+xlabel('Actual Power (W/cm^2)')
+ylabel('Predicted Power (W/cm^2)')
+legend('650 C')
+
+subplot(2,4,7)
+plot(Power_700, ResP700_Islam, '*')
+xlabel('Actual Power (W/cm^2)')
+ylabel('Predicted Power (W/cm^2)')
+legend('700 C')
+
+subplot(2,4,8)
+plot(Power_750, ResP750_Islam, '*')
+xlabel('Actual Power (W/cm^2)')
+ylabel('Predicted Power (W/cm^2)')
+legend('750 C')
+
+% plotting points over trend
+figure(4)       % experimental voltage curves
 yyaxis left
 plot(Current_600, Voltage_600)
 hold on
